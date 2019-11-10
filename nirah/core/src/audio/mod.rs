@@ -2,9 +2,6 @@ use async_trait::async_trait;
 
 use crate::prelude::*;
 
-mod rodio;
-pub use self::rodio::RodioAudioProvider;
-
 #[async_trait]
 pub trait AudioProvider: Provider {
 

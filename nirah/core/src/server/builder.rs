@@ -84,16 +84,19 @@ impl <T>Builder<T> {
         let contacts = self.contacts.unwrap_or(Box::new(InMemoryContactsProvider::new()));
         let database = self.database.unwrap_or(Box::new(InMemoryDatabaseProvider::new()));
         let rpc_handler = self.rpc_handler.unwrap_or(Box::new(DefaultRpcHandler::new()));
-        let audio = self.audio.unwrap_or(Box::new(RodioAudioProvider::new()));
         let notifier = self.notifier.unwrap_or(Box::new(NullNotifierProvider));
         let streaming = self.streaming.unwrap_or(Box::new(NullStreamingProvider));
         if let Some(rpc) = self.rpc {
-            Ok(Server {
-                config, accounts, rpc_handler,
-                rpc, address_manager, sessions,
-                contacts, database, audio,
-                notifier, streaming
-            })
+            if let Some(audio) = self.audio {
+                Ok(Server {
+                    config, accounts, rpc_handler,
+                    rpc, address_manager, sessions,
+                    contacts, database, audio,
+                    notifier, streaming
+                })
+            } else {
+                Err(io::Error::new(io::ErrorKind::InvalidInput, "Audio Provider is required"))
+            }
         } else {
             Err(io::Error::new(io::ErrorKind::InvalidInput, "Rpc Provider is required"))
         }

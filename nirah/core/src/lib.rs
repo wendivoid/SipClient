@@ -37,7 +37,6 @@ pub mod prelude {
     pub use crate::core::NirahResult;
     pub use crate::core::NirahError;
     pub use crate::audio::AudioProvider;
-    pub use crate::audio::RodioAudioProvider;
     pub use crate::accounts::Account;
     pub use crate::accounts::NewAccount;
     pub use crate::accounts::AccountType;

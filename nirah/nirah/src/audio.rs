@@ -1,6 +1,6 @@
 use async_trait::async_trait;
 
-use crate::prelude::*;
+use nirah_core::prelude::*;
 
 pub struct RodioAudioProvider {
 
