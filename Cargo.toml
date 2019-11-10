@@ -4,5 +4,6 @@ members = [
   "nirah/core",
   "crates/uri",
   "crates/parse",
-  "crates/sip"
+  "crates/sip",
+  "crates/sdp"
 ]
