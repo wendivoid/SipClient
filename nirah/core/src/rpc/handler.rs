@@ -155,6 +155,9 @@ impl RpcHandlerProvider for DefaultRpcHandler {
                 }
 
                 Ok(RpcResponse::Ok)
+            },
+            RpcRequest::AllAudioDevices => {
+                Ok(RpcResponse::AudioDevices{ devices: ctx.audio.list_audio_devices().await? })
             }
         }
     }

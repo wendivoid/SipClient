@@ -30,5 +30,6 @@ pub enum RpcResponse {
         rpc: (String, String),
         rpc_handler: (String, String),
         sessions: Vec<(String, String)>
-    }
+    },
+    AudioDevices { devices: Vec<AudioDevice> }
 }

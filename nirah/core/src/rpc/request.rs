@@ -27,5 +27,8 @@ pub enum RpcRequest {
     EditContact { contact: Contact },
     RemoveContact { id: u32 },
     ContactTransactions { contact: u32 },
-    PerformTransaction { account: u32, contact: u32, transaction: NewTransactionEvent }
+    PerformTransaction { account: u32, contact: u32, transaction: NewTransactionEvent },
+
+    /// Audio
+    AllAudioDevices
 }
