@@ -79,6 +79,7 @@ impl fmt::Display for SdpOffer {
         for media in &self.media {
             write!(f, "\r\nm={}", media)?;
         }
+        write!(f, "\r\n")?;
         Ok(())
     }
 }
