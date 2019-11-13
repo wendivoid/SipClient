@@ -57,14 +57,14 @@ pub fn parse_u32(slice: &[u8]) -> Result<u32, IoError> {
 	)
 }
 
-//pub fn parse_u64(slice: &[u8]) -> Result<u64, IoError> {
-//	Ok(
-//		::std::str::from_utf8(slice)
-//		.map_err(|_| IoError::new(IoErrorKind::InvalidInput, "Failed to parse utf8 u64 integer"))?
-//		.parse()
-//		.map_err(|_| IoError::new(IoErrorKind::InvalidInput, "Failed to parse u64 integer"))?
-//	)
-//}
+pub fn parse_u64(slice: &[u8]) -> Result<u64, IoError> {
+	Ok(
+		::std::str::from_utf8(slice)
+		.map_err(|_| IoError::new(IoErrorKind::InvalidInput, "Failed to parse utf8 u64 integer"))?
+		.parse()
+		.map_err(|_| IoError::new(IoErrorKind::InvalidInput, "Failed to parse u64 integer"))?
+	)
+}
 
 pub fn parse_f32(slice: &[u8]) -> Result<f32, IoError> {
 	Ok(
@@ -94,10 +94,10 @@ named!(pub parse_string<String>, map_res!(
     take_while!(is_alphanumeric), slice_to_string
 ));
 
-named!(pub parse_u64<u64>, do_parse!(
-	number: map_res!(take_while!(is_digit), parse_u64) >>
-	(number.1)
-));
+//named!(pub parse_u64<u64>, do_parse!(
+//	number: map_res!(take_while!(is_digit), _parse_u64) >>
+//	(number)
+//));
 
 named!(pub parse_possibly_quoted_string<String>, alt!(
 	parse_string | parse_quoted_string
