@@ -6,11 +6,15 @@ use std::fmt;
 
 use crate::SdpSessionAttributes;
 
+// https://www.iana.org/assignments/sdp-parameters/sdp-parameters.xhtml#sdp-parameters-3
+
 #[derive(Debug, PartialEq, Clone)]
 pub enum SdpBandwidth {
     As(u32),
     Ct(u32),
     Tias(u32),
+    Rs(u32),
+    Rr(u32),
     Unknown(String, u32)
 }
 
@@ -20,6 +24,8 @@ impl fmt::Display for SdpBandwidth {
             SdpBandwidth::As(num) => write!(f, "AS {}", num),
             SdpBandwidth::Ct(num) => write!(f, "CT {}", num),
             SdpBandwidth::Tias(num) => write!(f, "TIAS {}", num),
+            SdpBandwidth::Rs(num) => write!(f, "RS {}", num),
+            SdpBandwidth::Rr(num) => write!(f, "RR {}", num),
             SdpBandwidth::Unknown(key, num) => write!(f, "{} {}", key, num)
         }
     }
