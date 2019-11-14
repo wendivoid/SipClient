@@ -20,9 +20,8 @@ impl fmt::Display for SdpAttributeType {
 }
 
 named!(pub parse_attribute_type<SdpAttributeType>, alt!(
-    map!(tag!("rtpmap"), |_| SdpAttributeType::Rtpmap) |
-    map!(tag!("fmtp"), |_| SdpAttributeType::Fmtp) |
-    map!(tag!("recvonly"), |_| SdpAttributeType::RecvOnly) |
-    map!(tag!("sendrecv"), |_| SdpAttributeType::SendRecv) |
-    map!(tag!("SendRecv"), |_| SdpAttributeType::SendRecv)
+    map!(tag_no_case!("rtpmap"), |_| SdpAttributeType::Rtpmap) |
+    map!(tag_no_case!("fmtp"), |_| SdpAttributeType::Fmtp) |
+    map!(tag_no_case!("recvonly"), |_| SdpAttributeType::RecvOnly) |
+    map!(tag_no_case!("sendrecv"), |_| SdpAttributeType::SendRecv)
 ));
