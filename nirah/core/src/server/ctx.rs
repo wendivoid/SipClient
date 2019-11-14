@@ -10,6 +10,7 @@ pub struct SessionCtx<'a> {
     pub contacts: &'a mut ContactsFuture,
     pub database: &'a mut DatabaseFuture,
     pub streaming: &'a mut StreamingFuture,
+    pub address_manager: &'a mut AddressManager,
 }
 
 pub struct StreamingCtx<'a> {
@@ -18,7 +19,8 @@ pub struct StreamingCtx<'a> {
     pub notifier: &'a mut NotifierFuture,
     pub accounts: &'a mut AccountsFuture,
     pub contacts: &'a mut ContactsFuture,
-    pub database: &'a mut DatabaseFuture
+    pub database: &'a mut DatabaseFuture,
+    pub address_manager: &'a mut AddressManager,
 }
 
 pub struct ServerCtx<'a> {
@@ -71,6 +73,7 @@ macro_rules! session_ctx {
             contacts: $server.contacts,
             database: $server.database,
             streaming: $server.streaming,
+            address_manager: $server.address_manager
         }
     }
 }
@@ -84,7 +87,8 @@ macro_rules! streaming_ctx {
             accounts: $server.accounts,
             config: $server.config,
             contacts: $server.contacts,
-            database: $server.database
+            database: $server.database,
+            address_manager: $server.address_manager
         }
     }
 }
@@ -100,6 +104,7 @@ macro_rules! session_ctx_from_server {
             contacts: &mut $server.contacts,
             database: &mut $server.database,
             streaming: &mut $server.streaming,
+            address_manager: &mut $server.address_manager,
         }
     }
 }

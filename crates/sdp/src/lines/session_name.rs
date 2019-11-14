@@ -16,6 +16,12 @@ impl fmt::Display for SdpSessionName {
     }
 }
 
+impl Into<String> for SdpSessionName {
+    fn into(self) -> String {
+        self.0
+    }
+}
+
 named!(pub parse_session_name_line<SdpSessionName>, do_parse!(
     tag!("s=") >>
     name: parse_session_name >>

@@ -2,6 +2,7 @@ use async_trait::async_trait;
 
 use nirah_core::prelude::*;
 
+
 pub struct GStreamerProvider {
 
 }
@@ -31,7 +32,7 @@ impl Provider for GStreamerProvider {
 
 #[async_trait]
 impl StreamingProvider for GStreamerProvider {
-    async fn handle_session<'a>(&mut self, _ctx: StreamingCtx<'a>) -> NirahResult<()> {
+    async fn handle_session<'a>(&mut self, _ctx: StreamingCtx<'a>, _event: StreamingEvent) -> NirahResult<()> {
         Ok(())
     }
 }

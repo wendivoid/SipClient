@@ -1,4 +1,17 @@
+use nirah_sdp::SdpOffer;
+use nirah_sdp::SdpNetworkType;
+use nirah_sdp::SdpAddressType;
+use nirah_sdp::SdpConnection;
+use nirah_sdp::SdpMedia;
+use nirah_sdp::SdpMediaFormat;
+use nirah_sdp::SdpMediaType;
+use nirah_sdp::SdpProtocol;
+use nirah_sdp::SdpSessionAttributes;
+use nirah_sdp::Codec;
+use nirah_sdp::parse_sdp_offer;
+
 use crate::prelude::*;
+use crate::config::keys::{ default_ip_interface, default_ip_interface_value };
 
 impl SipSessionProvider {
     pub(crate) async fn handle_invite<'a>(&mut self, msg: nirah_sip::SipMessage, ctx: SessionCtx<'a>) -> NirahResult<()> {
@@ -59,12 +72,54 @@ impl SipSessionProvider {
         Ok(())
     }
 
-    pub async fn accept_invite<'a>(&mut self, ctx: SessionCtx<'a>, invite: usize) -> NirahResult<()> {
-        if let Some(_invitation) = self.invitations.get(invite) {
-            ctx.streaming.handle_session(streaming_ctx!(ctx)).await?;
+    pub async fn accept_invite<'a>(&mut self, mut ctx: SessionCtx<'a>, invite: usize) -> NirahResult<()> {
+        if let Some(invitation) = self.invitations.get(invite) {
+            let (_, possible_sdp) = parse_sdp_offer(&invitation.body)?;
+            if let Some(response_sdp) = self.get_response_sdp(&mut ctx, &possible_sdp).await? {
+                 let event = StreamingEvent {
+                     inputs: vec![possible_sdp],
+                     outputs: vec![response_sdp]
+                 };
+                 ctx.streaming.handle_session(streaming_ctx!(ctx), event).await?;
+            } else {
+                warn!("Failed to create response SDP Message: {:?}", possible_sdp);
+            }
         } else {
             warn!("Attempted to accept a non existant invite");
         }
         Ok(())
+    }
+
+    async fn get_response_sdp<'a>(&self, ctx: &mut SessionCtx<'a>, sdp: &SdpOffer) -> NirahResult<Option<SdpOffer>> {
+        let mut is_valid = false;
+        for media in &sdp.media {
+            for format in &media.formats {
+                if format.codec == Codec::Pcmu {
+                    is_valid = true;
+                }
+            }
+        }
+        if is_valid {
+            let _ip_interface = default_ip_interface();
+            let _default_ip_interface = default_ip_interface_value();
+            let interface = context_config_get_string!(ctx, _ip_interface, _default_ip_interface)?;
+            let address = ctx.address_manager
+                            .network_from_name(&interface)
+                            .expect("Failed to get current ip address");
+            let connection = SdpConnection {
+                network_type: SdpNetworkType::Internet,
+                address_type: SdpAddressType::Ipv4,
+                address: address
+            };
+            let new = SdpOffer::new(sdp.origin.clone(), sdp.name.clone())
+                            .add_optional_attribute(SdpSessionAttributes::Connection(connection))
+                            .add_media(
+                                SdpMedia::new(SdpMediaType::Audio, ctx.address_manager.port() as u32, SdpProtocol::RtpAvp)
+                                    .add_format(SdpMediaFormat::new(Codec::Pcmu))
+                            );
+            Ok(Some(new))
+        } else {
+            Ok(None)
+        }
     }
 }

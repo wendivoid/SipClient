@@ -1,6 +1,7 @@
 use async_trait::async_trait;
 
 use crate::prelude::*;
+use super::StreamingEvent;
 
 pub struct NullStreamingProvider;
 
@@ -20,7 +21,7 @@ impl Provider for NullStreamingProvider {
 
 #[async_trait]
 impl StreamingProvider for NullStreamingProvider {
-    async fn handle_session<'a>(&mut self, _ctx: StreamingCtx<'a>) -> NirahResult<()> {
+    async fn handle_session<'a>(&mut self, _ctx: StreamingCtx<'a>, _events: StreamingEvent) -> NirahResult<()> {
         Ok(())
     }
 }

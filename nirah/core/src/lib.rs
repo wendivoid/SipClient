@@ -78,6 +78,7 @@ pub mod prelude {
     pub use crate::session::SipSessionProvider;
     pub use crate::session::SessionEvent;
     pub use crate::streaming::StreamingProvider;
+    pub use crate::streaming::StreamingEvent;
     pub use crate::streaming::NullStreamingProvider;
 }
 #[cfg(test)]
