@@ -36,7 +36,7 @@ impl SdpOffer {
         }
     }
 
-    pub fn add_optional_attributes(mut self, attr: SdpSessionAttributes) -> SdpOffer {
+    pub fn add_optional_attribute(mut self, attr: SdpSessionAttributes) -> SdpOffer {
         self.optional.push(attr);
         self
     }

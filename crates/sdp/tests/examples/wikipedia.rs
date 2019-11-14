@@ -51,7 +51,7 @@ a=rtpmap:99 h263-1998/90000\r\n";
              )
     ];
     for attr in optional {
-        sdp_offer = sdp_offer.add_optional_attributes(attr);
+        sdp_offer = sdp_offer.add_optional_attribute(attr);
     }
     for attr in attributes {
         sdp_offer = sdp_offer.add_attribute(attr);
@@ -112,7 +112,7 @@ a=rtpmap:99 h263-1998/90000\r\n".to_string();
              )
     ];
     for attr in optional {
-        sdp_offer = sdp_offer.add_optional_attributes(attr);
+        sdp_offer = sdp_offer.add_optional_attribute(attr);
     }
     for attr in attributes {
         sdp_offer = sdp_offer.add_attribute(attr);

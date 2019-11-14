@@ -61,7 +61,7 @@ a=rtpmap:0 PCMU/8000\r
     ];
 
     for attr in optional {
-        sdp_offer = sdp_offer.add_optional_attributes(attr);
+        sdp_offer = sdp_offer.add_optional_attribute(attr);
     }
     for attr in attributes {
         sdp_offer = sdp_offer.add_attribute(attr);
@@ -135,7 +135,7 @@ a=rtpmap:0 PCMU/8000\r
     ];
 
     for attr in optional {
-        sdp_offer = sdp_offer.add_optional_attributes(attr);
+        sdp_offer = sdp_offer.add_optional_attribute(attr);
     }
     for attr in attributes {
         sdp_offer = sdp_offer.add_attribute(attr);
