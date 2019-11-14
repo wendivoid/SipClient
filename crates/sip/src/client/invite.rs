@@ -2,6 +2,7 @@ use std::io::Result as IoResult;
 
 use crate::headers::Headers;
 use crate::headers::Header;
+use crate::headers::ContentType;
 use crate::headers::NamedHeader;
 use crate::headers::via::ViaHeader;
 use nirah_uri::Uri;
@@ -67,6 +68,8 @@ impl InviteHelper {
             .header(self.headers.via().unwrap())
             .header(self.headers.to().unwrap())
             .header(self.headers.from().unwrap())
+            .header(Header::ContentType(ContentType::Sdp))
+            .header(Header::ContentLength(sdp.len()))
             .body(sdp)
             .build()
     }

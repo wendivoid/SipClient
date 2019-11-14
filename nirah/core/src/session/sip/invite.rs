@@ -76,6 +76,12 @@ impl SipSessionProvider {
         if let Some(invitation) = self.invitations.get(invite) {
             let (_, possible_sdp) = parse_sdp_offer(&invitation.body)?;
             if let Some(response_sdp) = self.get_response_sdp(&mut ctx, &possible_sdp).await? {
+                let socket = unwrap_mut_or_else_not_connected!(self, socket, "Socket not connected");
+                let account = unwrap_or_else_not_connected!(self, acc, "Account not connected");
+                let answer_req = invitation.accept(format!("{}", response_sdp).as_bytes().to_vec())?;
+                let data = format!("{}", answer_req);
+                println!("{:?}", data);
+                socket.send_to(data.as_ref(), &account.get_socket_address()).await?;
                  let event = StreamingEvent {
                      inputs: vec![possible_sdp],
                      outputs: vec![response_sdp]

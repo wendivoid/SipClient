@@ -52,12 +52,10 @@ pub fn parse_attribute_list(input: &[u8]) -> ParserResult<(Vec<SdpAttribute>, Ve
 
      while let Ok((remains, (ty, codec, value))) = parse_attribute(initial_data) {
         initial_data = remains;
-        let mut completed = false;
         if let Some(codec) = &codec {
             for media_format in formats.iter_mut() {
                 if &media_format.codec == codec {
                     media_format.attributes.push(SdpAttribute { ty: ty.clone(), value: value.clone() });
-                    completed = false;
                     break;
                 }
             }
