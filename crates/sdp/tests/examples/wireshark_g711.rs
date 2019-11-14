@@ -8,6 +8,7 @@ s=Clarent C5CM\r
 c=IN IP4 200.57.7.196\r
 t=0 0\r
 m=audio 40376 RTP/AVP 8 18 4 0\r
+a=sendrecv\r
 a=rtpmap:8 PCMA/8000\r
 a=rtpmap:18 G729/8000\r
 a=rtpmap:4 G723/8000\r
@@ -37,6 +38,7 @@ a=rtpmap:0 PCMU/8000\r
     let attributes = vec![];
     let medias = vec![
         SdpMedia::new(SdpMediaType::Audio, 40376, SdpProtocol::RtpAvp)
+            .add_attribute(SdpAttribute::new(SdpAttributeType::SendRecv))
             .add_format(
                 SdpMediaFormat::new(Codec::Pcma)
                     .add_attribute(SdpAttribute {
@@ -82,6 +84,7 @@ s=Clarent C5CM\r
 c=IN IP4 200.57.7.196\r
 t=0 0\r
 m=audio 40376 RTP/AVP 8 18 4 0\r
+a=sendrecv\r
 a=rtpmap:8 PCMA/8000\r
 a=rtpmap:18 G729/8000\r
 a=rtpmap:4 G723/8000\r
@@ -111,6 +114,7 @@ a=rtpmap:0 PCMU/8000\r
     let attributes = vec![];
     let medias = vec![
         SdpMedia::new(SdpMediaType::Audio, 40376, SdpProtocol::RtpAvp)
+            .add_attribute(SdpAttribute::new(SdpAttributeType::SendRecv))
             .add_format(
                 SdpMediaFormat::new(Codec::Pcma)
                     .add_attribute(SdpAttribute {

@@ -61,8 +61,7 @@ pub fn parse_attribute_list(input: &[u8]) -> ParserResult<(Vec<SdpAttribute>, Ve
                     break;
                 }
             }
-        }
-        if completed {
+        } else {
             global.push(SdpAttribute { ty, value: value });
         }
      }
