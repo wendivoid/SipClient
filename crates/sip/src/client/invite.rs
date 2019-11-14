@@ -69,7 +69,7 @@ impl InviteHelper {
             .header(self.headers.to().unwrap())
             .header(self.headers.from().unwrap())
             .header(Header::ContentType(ContentType::Sdp))
-            .header(Header::ContentLength(sdp.len()))
+            .header(Header::ContentLength(sdp.len() as u32))
             .body(sdp)
             .build()
     }
