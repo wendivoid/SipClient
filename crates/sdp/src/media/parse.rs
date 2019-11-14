@@ -49,32 +49,35 @@ pub fn parse_attribute_list(input: &[u8]) -> ParserResult<(Vec<SdpAttribute>, Ve
      if &initial_data[..2] == b"\r\n" {
          initial_data = &initial_data[2..];
      }
-     while let Ok((remains, (ty, codec, data))) = parse_attribute(initial_data) {
+
+     while let Ok((remains, (ty, codec, value))) = parse_attribute(initial_data) {
         initial_data = remains;
         let mut completed = false;
-        for media_format in formats.iter_mut() {
-            if media_format.codec == codec {
-                media_format.attributes.push(SdpAttribute { ty: ty.clone(), value: Some(data.clone()) });
-                completed = false;
-                break;
+        if let Some(codec) = &codec {
+            for media_format in formats.iter_mut() {
+                if &media_format.codec == codec {
+                    media_format.attributes.push(SdpAttribute { ty: ty.clone(), value: value.clone() });
+                    completed = false;
+                    break;
+                }
             }
         }
         if completed {
-            global.push(SdpAttribute { ty, value: Some(data) });
+            global.push(SdpAttribute { ty, value: value });
         }
      }
      Ok((initial_data, (global, formats)))
 }
 
-named!(pub parse_attribute<(SdpAttributeType, Codec, String)>, do_parse!(
+named!(pub parse_attribute<(SdpAttributeType, Option<Codec>, Option<String>)>, do_parse!(
     tag!("a=") >>
     ty: parse_attribute_type >>
     opt!(char!(':')) >>
     //port: map_res!(take_while!(is_digit), parse_u32) >>
     //port_count: opt!(parse_optional_port) >>
-    codec: parse_codec >>
-    char!(' ') >>
-    value: map_res!(take_until!("\r"), slice_to_string) >>
+    codec: opt!(parse_codec) >>
+    opt!(char!(' ')) >>
+    value: opt!(map_res!(take_until!("\r"), slice_to_string)) >>
     tag!("\r\n") >>
     ((ty, codec, value))
 ));
