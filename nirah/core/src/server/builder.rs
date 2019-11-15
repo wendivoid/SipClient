@@ -85,7 +85,14 @@ impl <T>Builder<T> {
         let database = self.database.unwrap_or(Box::new(InMemoryDatabaseProvider::new()));
         let rpc_handler = self.rpc_handler.unwrap_or(Box::new(DefaultRpcHandler::new()));
         let notifier = self.notifier.unwrap_or(Box::new(NullNotifierProvider));
-        let streaming = self.streaming.unwrap_or(Box::new(NullStreamingProvider));
+
+        #[cfg(feature = "gstreamer")]
+        let streaming = Box::new(GStreamerProvider::new().map_err(|_err| {
+            io::Error::new(io::ErrorKind::InvalidInput, "Failed to create GSTreamerServiceProvider")
+        })?);
+        #[cfg(not(feature = "gstreamer"))]
+        let streaming = self.streaming.unwrap_or(Box::new(StreamingProvider::new()));
+
         if let Some(rpc) = self.rpc {
             if let Some(audio) = self.audio {
                 Ok(Server {

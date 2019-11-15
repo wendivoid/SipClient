@@ -1,15 +1,6 @@
 use async_trait::async_trait;
-use gstreamer::Element;
-use gstreamer::ElementFactory;
-use glib::object::ObjectExt;
-use glib::value::ToValue;
-use gstreamer::ElementExtManual;
 
-use nirah_core::prelude::*;
-use nirah_sdp::SdpMedia;
-use nirah_sdp::SdpMediaFormat;
-use nirah_sdp::Codec;
-use nirah_sdp::SdpConnection;
+use crate::prelude::*;
 
 
 pub struct GStreamerProvider {
@@ -44,7 +35,7 @@ impl Provider for GStreamerProvider {
 
 #[async_trait]
 impl StreamingProvider for GStreamerProvider {
-    async fn handle_session<'a>(&mut self, mut ctx: StreamingCtx<'a>, event: StreamingEvent) -> NirahResult<()> {
+    async fn handle_session<'a>(&mut self, mut _ctx: StreamingCtx<'a>, _event: StreamingEvent) -> NirahResult<()> {
         Ok(())
     }
 }

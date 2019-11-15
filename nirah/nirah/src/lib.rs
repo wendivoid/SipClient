@@ -2,7 +2,6 @@
 extern crate clap;
 #[macro_use]
 extern crate log;
-#[macro_use]
 extern crate nirah_core;
 extern crate ascii_table;
 
@@ -14,7 +13,6 @@ use nirah_core::server::Builder;
 
 pub mod uds;
 pub mod cli;
-pub mod streaming;
 mod audio;
 pub use self::audio::RodioAudioProvider;
 
@@ -23,7 +21,6 @@ pub async fn create_server() -> NirahResult<Server<UnixStream>> {
         Builder::new()
          .audio(Box::new(RodioAudioProvider::new()))
          .rpc(Box::new(uds::UdsRpcProvider::new()))
-         .streaming(Box::new(streaming::GStreamerProvider::new()?))
          .build()?
      )
 }

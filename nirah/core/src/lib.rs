@@ -81,7 +81,10 @@ pub mod prelude {
     pub use crate::streaming::StreamingProvider;
     pub use crate::streaming::StreamingError;
     pub use crate::streaming::NullStreamingProvider;
+    #[cfg(feature = "gstreamer")]
+    pub use crate::streaming::GStreamerProvider;
 }
+
 #[cfg(test)]
 mod tests {
     #[test]

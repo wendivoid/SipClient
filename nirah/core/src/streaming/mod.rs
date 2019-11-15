@@ -6,6 +6,11 @@ use nirah_sdp::SdpOffer;
 mod null;
 pub use self::null::NullStreamingProvider;
 
+#[cfg(feature = "gstreamer")]
+mod gstreamer;
+#[cfg(feature = "gstreamer")]
+pub use self::gstreamer::GStreamerProvider;
+
 pub struct StreamingEvent {
     pub inputs: Vec<SdpOffer>,
     pub outputs: Vec<SdpOffer>
