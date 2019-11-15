@@ -8,7 +8,7 @@ use nirah_uri::Transport;
 use nirah_uri::parse_domain;
 
 use crate::prelude::*;
-use crate::config::keys::{ default_ip_interface, default_ip_interface_value };
+use crate::config::keys::default_ip_interface;
 
 use std::io;
 use std::time::Instant;
@@ -67,9 +67,8 @@ impl SipSessionProvider {
 
     pub async fn connect<'a>(&mut self, acc: Account, ctx: &mut ServerCtx<'a>) -> NirahResult<()> {
         let _ip_interface = default_ip_interface();
-        let _default_ip_interface = default_ip_interface_value();
 
-        let interface = context_config_get_string!(ctx, _ip_interface, _default_ip_interface)?;
+        let interface = __context_config_get_string!(ctx, _ip_interface)?;
         let address = ctx.address_manager
                         .network_from_name(&interface)
                         .unwrap_or("0.0.0.0".into());

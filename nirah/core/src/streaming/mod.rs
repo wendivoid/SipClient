@@ -11,6 +11,12 @@ pub struct StreamingEvent {
     pub outputs: Vec<SdpOffer>
 }
 
+#[derive(Debug, PartialEq, Clone)]
+pub enum StreamingError {
+    FailedOpeningSink,
+    InvalidMediaFormat
+}
+
 #[async_trait]
 pub trait StreamingProvider: Provider {
     async fn handle_session<'a>(&mut self, ctx: StreamingCtx<'a>, events: StreamingEvent) -> NirahResult<()>;

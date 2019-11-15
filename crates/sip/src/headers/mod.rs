@@ -59,6 +59,15 @@ impl Headers {
         None
     }
 
+    pub fn incremented_cseq(&self) -> Option<Header> {
+        for h in &self.0 {
+            if let Header::CSeq(a, b) = h {
+                return Some(Header::CSeq(a + 1, b.clone()));
+            }
+        }
+        None
+    }
+
     /// Return the From header if one is present.
     pub fn from(&self) -> Option<Header> {
         for h in &self.0 {

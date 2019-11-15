@@ -68,8 +68,11 @@ impl InviteHelper {
             .header(self.headers.via().unwrap())
             .header(self.headers.to().unwrap())
             .header(self.headers.from().unwrap())
+            .header(self.headers.call_id().unwrap())
+            .header(Header::ContentDisposition("session".into()))
             .header(Header::ContentType(ContentType::Sdp))
             .header(Header::ContentLength(sdp.len() as u32))
+            .header(Header::Other("Remote-Party-Id".into(), "\"20\" <sip:20@192.168.76:5060>".into()))
             .body(sdp)
             .build()
     }

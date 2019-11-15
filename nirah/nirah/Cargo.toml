@@ -11,7 +11,7 @@ name = "nirah"
 path = "src/bin/nirah.rs"
 
 [dependencies]
-nirah-core = { path = "../core" }
+nirah-core = { path = "../core", features = ["glib", "gstreamer"] }
 nirah-sip = { path = "../../crates/sip" }
 nirah-sdp = { path = "../../crates/sdp" }
 nirah-uri = { path = "../../crates/uri" }
@@ -26,3 +26,4 @@ ascii_table = "2.0.0"
 gstreamer = "0.14.5"
 rodio = "0.9.0"
 alsa = "0.1.2"
+glib = "0.8.2"

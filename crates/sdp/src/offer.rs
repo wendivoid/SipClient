@@ -65,6 +65,15 @@ impl SdpOffer {
         self.media = media;
         self
     }
+
+    pub fn get_connection(&self) -> Option<SdpConnection> {
+        for thing in &self.optional {
+            if let SdpSessionAttributes::Connection(conn) = thing {
+                return Some(conn.clone());
+            }
+        }
+        None
+    }
 }
 
 impl fmt::Display for SdpOffer {

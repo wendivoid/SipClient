@@ -80,11 +80,10 @@ impl SipSessionProvider {
                 let account = unwrap_or_else_not_connected!(self, acc, "Account not connected");
                 let answer_req = invitation.accept(format!("{}", response_sdp).as_bytes().to_vec())?;
                 let data = format!("{}", answer_req);
-                println!("{:?}", data);
                 socket.send_to(data.as_ref(), &account.get_socket_address()).await?;
                  let event = StreamingEvent {
-                     inputs: vec![possible_sdp],
-                     outputs: vec![response_sdp]
+                     inputs: vec![response_sdp],
+                     outputs: vec![possible_sdp]
                  };
                  ctx.streaming.handle_session(streaming_ctx!(ctx), event).await?;
             } else {
@@ -108,7 +107,7 @@ impl SipSessionProvider {
         if is_valid {
             let _ip_interface = default_ip_interface();
             let _default_ip_interface = default_ip_interface_value();
-            let interface = context_config_get_string!(ctx, _ip_interface, _default_ip_interface)?;
+            let interface = __context_config_get_string!(ctx, _ip_interface)?;
             let address = ctx.address_manager
                             .network_from_name(&interface)
                             .expect("Failed to get current ip address");
