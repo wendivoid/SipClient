@@ -13,10 +13,6 @@ impl Provider for NullNotifierProvider {
     fn nirah_provider_version(&self) -> &'static str {
         env!("CARGO_PKG_VERSION")
     }
-
-    fn required_config_variables(&self) -> NirahResult<Vec<(VariableKey, Option<VariableValue>)>> {
-        Ok(vec![])
-    }
 }
 
 #[async_trait]

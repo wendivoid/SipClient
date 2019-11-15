@@ -8,5 +8,8 @@ pub trait Provider: Send + Sync {
 
     fn nirah_provider_version(&self) -> &'static str;
 
-    fn required_config_variables(&self) -> NirahResult<Vec<(VariableKey, Option<VariableValue>)>>;
+    fn required_config_variables(&self) -> NirahResult<Vec<(VariableKey, Option<VariableValue>)>> {
+        Ok(vec![])
+    }
+
 }

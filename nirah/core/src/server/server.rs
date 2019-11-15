@@ -33,7 +33,7 @@ pub struct Server<T> {
 
 impl <T>Server<T> {
 
-    pub async fn mainloop(mut self) -> NirahResult<()> {
+    async fn initialize_config(&mut self) -> NirahResult<()> {
         self.config.register_config_settings(&self.config.required_config_variables()?).await?;
         self.config.register_config_settings(&self.accounts.required_config_variables()?).await?;
         self.config.register_config_settings(&self.rpc.required_config_variables()?).await?;
@@ -42,6 +42,11 @@ impl <T>Server<T> {
         self.config.register_config_settings(&self.notifier.required_config_variables()?).await?;
         self.config.register_config_settings(&self.streaming.required_config_variables()?).await?;
         self.config.register_config_settings(&SipSessionProvider::new().required_config_variables()?).await?;
+        Ok(())
+    }
+
+    pub async fn mainloop(mut self) -> NirahResult<()> {
+        self.initialize_config().await?;
         self.rpc.connect(&mut self.config).await?;
         loop {
             match self.run_once().await {
