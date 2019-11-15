@@ -18,7 +18,6 @@ impl SipSessionProvider {
             return Ok(());
         }
         let data = if let Some(client) = &mut self.client {
-
             client.set_register_challenge(challenge_response)?;
             let req = client.get_register_request()?;
             format!("{}", req)

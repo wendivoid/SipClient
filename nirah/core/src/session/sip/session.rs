@@ -3,7 +3,7 @@ use nirah_sip::core::Method;
 use nirah_sip::parse_message;
 
 use crate::prelude::*;
-use super::not_connected;
+use super::errors::*;
 
 use std::time::Duration;
 use std::time::Instant;
