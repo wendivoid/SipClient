@@ -30,7 +30,7 @@ impl Provider for GStreamerProvider {
 
 #[async_trait]
 impl StreamingProvider for GStreamerProvider {
-    async fn handle_session<'a>(&mut self, mut _ctx: StreamingCtx<'a>, _event: StreamingEvent) -> NirahResult<()> {
+    async fn handle_session<'a>(&mut self, _ctx: StreamingCtx<'a>, _event: StreamingEvent) -> NirahResult<()> {
         Ok(())
     }
 }

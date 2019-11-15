@@ -75,13 +75,14 @@ impl SipSessionProvider {
     pub async fn accept_invite<'a>(&mut self, mut ctx: SessionCtx<'a>, invite: usize) -> NirahResult<()> {
         if let Some(invitation) = self.invitations.get(invite) {
             let (_, possible_sdp) = parse_sdp_offer(&invitation.body)?;
-            if let Some(response_sdp) = self.get_response_sdp(&mut ctx, &possible_sdp).await? {
+            if let Some((response_sdp, local_port)) = self.get_response_sdp(&mut ctx, &possible_sdp).await? {
                 let socket = unwrap_mut_or_else_not_connected!(self, socket, "Socket not connected");
                 let account = unwrap_or_else_not_connected!(self, acc, "Account not connected");
                 let answer_req = invitation.accept(format!("{}", response_sdp).as_bytes().to_vec())?;
                 let data = format!("{}", answer_req);
                 socket.send_to(data.as_ref(), &account.get_socket_address()).await?;
                  let event = StreamingEvent {
+                     local_port,
                      inputs: vec![response_sdp],
                      outputs: vec![possible_sdp]
                  };
@@ -95,7 +96,7 @@ impl SipSessionProvider {
         Ok(())
     }
 
-    async fn get_response_sdp<'a>(&self, ctx: &mut SessionCtx<'a>, sdp: &SdpOffer) -> NirahResult<Option<SdpOffer>> {
+    async fn get_response_sdp<'a>(&self, ctx: &mut SessionCtx<'a>, sdp: &SdpOffer) -> NirahResult<Option<(SdpOffer, u32)>> {
         let mut is_valid = false;
         for media in &sdp.media {
             for format in &media.formats {
@@ -115,13 +116,14 @@ impl SipSessionProvider {
                 address_type: SdpAddressType::Ipv4,
                 address: address
             };
+            let local_port = ctx.address_manager.port() as u32;
             let new = SdpOffer::new(sdp.origin.clone(), sdp.name.clone())
                             .add_optional_attribute(SdpSessionAttributes::Connection(connection))
                             .add_media(
-                                SdpMedia::new(SdpMediaType::Audio, ctx.address_manager.port() as u32, SdpProtocol::RtpAvp)
+                                SdpMedia::new(SdpMediaType::Audio, local_port, SdpProtocol::RtpAvp)
                                     .add_format(SdpMediaFormat::new(Codec::Pcmu))
                             );
-            Ok(Some(new))
+            Ok(Some((new, local_port)))
         } else {
             Ok(None)
         }

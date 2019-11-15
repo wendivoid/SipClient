@@ -12,6 +12,7 @@ mod gstreamer;
 pub use self::gstreamer::GStreamerProvider;
 
 pub struct StreamingEvent {
+    pub local_port: u32,
     pub inputs: Vec<SdpOffer>,
     pub outputs: Vec<SdpOffer>
 }
