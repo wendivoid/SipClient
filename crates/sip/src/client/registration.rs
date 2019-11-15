@@ -162,7 +162,7 @@ impl RegistrationManager {
             }
             Ok(())
         } else {
-            unreachable!()
+            Err(io::Error::new(io::ErrorKind::InvalidInput, "SIP Registration Response was not a request"))
         }
     }
 

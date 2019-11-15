@@ -25,11 +25,13 @@ impl AddressManager {
             .map(|item| {
                 for ip in item.ips {
                     if let IpNetwork::V4(net) = ip {
-                        return format!("{}", net.ip());
+                        return Some(format!("{}", net.ip()));
                     }
                 }
-                unreachable!()
+                warn!("No IP networks available");
+                None
             })
             .next()
+            .unwrap()
     }
 }

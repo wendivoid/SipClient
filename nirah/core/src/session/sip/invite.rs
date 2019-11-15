@@ -108,9 +108,8 @@ impl SipSessionProvider {
             let _ip_interface = default_ip_interface();
             let _default_ip_interface = default_ip_interface_value();
             let interface = __context_config_get_string!(ctx, _ip_interface)?;
-            let address = ctx.address_manager
-                            .network_from_name(&interface)
-                            .expect("Failed to get current ip address");
+            let address = ctx.address_manager.network_from_name(&interface)
+                .ok_or(NirahError::NoNetworksAvailable)?;
             let connection = SdpConnection {
                 network_type: SdpNetworkType::Internet,
                 address_type: SdpAddressType::Ipv4,

@@ -27,7 +27,10 @@ impl Param {
     pub fn from_key<'a>(key: &'a [u8], value: &'a [u8]) -> Result<Param, nom::Err<(&'a [u8], ErrorKind)>> {
         match key {
             b"transport" => Ok(Param::Transport(parse_transport(&value)?.1)),
-            b"branch" => Ok(Param::Branch(String::from_utf8(value.to_vec()).expect("Utf-8 Error"))),
+            b"branch" => Ok(
+                Param::Branch(String::from_utf8(value.to_vec())
+                    .map_err(|_err| nom::Err::Error((value, ErrorKind::Tag)))?
+                )),
             b"received" => {
                 let mut data = value.to_vec();
                 data.push(' ' as u8);

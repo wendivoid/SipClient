@@ -31,6 +31,7 @@ pub enum NirahError {
     InvalidContactId(u32),
     ParseIncomplete,
     SessionNotAssociatedWithAccount,
+    NoNetworksAvailable,
     Streaming(StreamingError),
     #[cfg(feature = "glib")]
     Glib(GlibError),

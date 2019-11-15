@@ -28,7 +28,7 @@ fn args() -> ArgMatches<'static> {
 #[tokio::main]
 async fn main() -> NirahResult<()> {
     let args = args();
-    nirah::set_log_level(args.occurrences_of("verbose")).expect("Failed to set log level");
+    nirah::set_log_level(args.occurrences_of("verbose"))?;
     let server = nirah::create_server().await?;
     if let Err(err) = server.mainloop().await {
         error!("{:?}", err);

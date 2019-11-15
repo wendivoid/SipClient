@@ -1,4 +1,6 @@
 use std::io::Result as IoResult;
+use std::io::Error as IoError;
+use std::io::ErrorKind as IoErrorKind;
 
 use crate::headers::Headers;
 use crate::headers::Header;
@@ -48,13 +50,38 @@ impl InviteHelper {
 
     /// Get A Ringing(180) request to answer this invite.
     pub fn ringing(&self) -> IoResult<SipMessage> {
+        let from_header = if let Some(header) = self.headers.from() {
+                header
+        } else {
+            return Err(IoError::new(IoErrorKind::InvalidInput, "SIP message does not contain a From header"));
+        };
+        let to_header = if let Some(header) = self.headers.to() {
+                header
+        } else {
+            return Err(IoError::new(IoErrorKind::InvalidInput, "SIP message does not contain a To header"));
+        };
+        let call_id_header = if let Some(header) = self.headers.call_id() {
+                header
+        } else {
+            return Err(IoError::new(IoErrorKind::InvalidInput, "SIP message does not contain a Call-Id header"));
+        };
+        let cseq_header = if let Some(header) = self.headers.cseq() {
+                header
+        } else {
+            return Err(IoError::new(IoErrorKind::InvalidInput, "SIP message does not contain a CSeq header"));
+        };
+        let via_header = if let Some(header) = self.headers.via() {
+                header
+        } else {
+            return Err(IoError::new(IoErrorKind::InvalidInput, "SIP message does not contain a Via header"));
+        };
         ResponseGenerator::new()
             .code(180)
-            .header(self.headers.from().unwrap())
-            .header(self.headers.to().unwrap())
-            .header(self.headers.call_id().unwrap())
-            .header(self.headers.cseq().unwrap())
-            .header(self.headers.via().unwrap())
+            .header(from_header)
+            .header(to_header)
+            .header(call_id_header)
+            .header(cseq_header)
+            .header(via_header)
             .header(Header::ContentLength(0))
             .build()
 
