@@ -154,6 +154,21 @@ impl RpcHandlerProvider for DefaultRpcHandler {
             },
             RpcRequest::AllAudioDevices => {
                 Ok(RpcResponse::AudioDevices{ devices: ctx.audio.list_audio_devices().await? })
+            },
+            RpcRequest::AllCurrentStreams => {
+                Ok(RpcResponse::AllStreams { streams: ctx.streaming.list_streams().await? })
+            },
+            RpcRequest::EndCall { account, call } => {
+                if let Some(account) = ctx.accounts.get_account(account).await? {
+                    for (id, session) in ctx.sessions {
+                        if &account.id == id {
+                            let rpc_req = SessionEvent::Bye { call: (&call).into() };
+                            session.handle_event(session_ctx!(ctx), rpc_req).await?;
+                        }
+                    }
+                }
+                ctx.streaming.end_stream(streaming_ctx!(ctx), call).await?;
+                Ok(RpcResponse::Ok)
             }
         }
     }

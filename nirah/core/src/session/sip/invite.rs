@@ -74,8 +74,11 @@ impl SipSessionProvider {
 
     pub async fn accept_invite<'a>(&mut self, mut ctx: SessionCtx<'a>, invite: usize) -> NirahResult<()> {
         if let Some(invitation) = self.invitations.get(invite) {
+            let call_id = invitation.call_id()?;
             let (_, possible_sdp) = parse_sdp_offer(&invitation.body)?;
+            trace!("Request SDP: {:?}", &possible_sdp);
             if let Some((response_sdp, local_port)) = self.get_response_sdp(&mut ctx, &possible_sdp).await? {
+                trace!("Response_sdp: {:?}", &response_sdp);
                 let socket = unwrap_mut_or_else_not_connected!(self, socket, "Socket not connected");
                 let account = unwrap_or_else_not_connected!(self, acc, "Account not connected");
                 let answer_req = invitation.accept(format!("{}", response_sdp).as_bytes().to_vec())?;
@@ -83,10 +86,13 @@ impl SipSessionProvider {
                 socket.send_to(data.as_ref(), &account.get_socket_address()).await?;
                  let event = StreamingEvent {
                      local_port,
+                     call_id,
                      inputs: vec![response_sdp],
                      outputs: vec![possible_sdp]
                  };
-                 ctx.streaming.handle_session(streaming_ctx!(ctx), event).await?;
+                 ctx.streaming.handle_streams(streaming_ctx!(ctx), event).await?;
+                 let new = self.invitations.remove(invite);
+                 self.active.push(new);
             } else {
                 warn!("Failed to create response SDP Message: {:?}", possible_sdp);
             }

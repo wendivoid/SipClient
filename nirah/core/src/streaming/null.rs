@@ -18,7 +18,15 @@ impl Provider for NullStreamingProvider {
 
 #[async_trait]
 impl StreamingProvider for NullStreamingProvider {
-    async fn handle_session<'a>(&mut self, _ctx: StreamingCtx<'a>, _events: StreamingEvent) -> NirahResult<()> {
+
+    async fn list_streams(&self) -> NirahResult<Vec<String>> {
+        Ok(vec![])
+    }
+
+    async fn handle_streams<'a>(&mut self, _ctx: StreamingCtx<'a>, _events: StreamingEvent) -> NirahResult<()> {
+        Ok(())
+    }
+    async fn end_stream<'a>(&mut self, _ctx: StreamingCtx<'a>, _call_id: String) -> NirahResult<()> {
         Ok(())
     }
 }

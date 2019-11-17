@@ -4,12 +4,14 @@ use std::io::ErrorKind as IoErrorKind;
 
 use crate::headers::Headers;
 use crate::headers::Header;
+use crate::core::Method;
 use crate::headers::ContentType;
 use crate::headers::NamedHeader;
 use crate::headers::via::ViaHeader;
 use nirah_uri::Uri;
 use crate::SipMessage;
 use crate::ResponseGenerator;
+use crate::RequestGenerator;
 
 macro_rules! impl_simple_header_method {
     ($name:ident, $variant:ident, $ty: ident) => {
@@ -101,6 +103,18 @@ impl InviteHelper {
             .header(Header::ContentLength(sdp.len() as u32))
             .header(Header::Other("Remote-Party-Id".into(), "\"20\" <sip:20@192.168.76:5060>".into()))
             .body(sdp)
+            .build()
+    }
+
+    pub fn bye(&self) -> IoResult<SipMessage> {
+        RequestGenerator::new()
+            .method(Method::Bye)
+            .uri(self.uri.clone())
+            .header(self.headers.call_id().unwrap())
+            .header(self.headers.cseq().unwrap())
+            .header(self.headers.via().unwrap())
+            .header(self.headers.from().unwrap())
+            .header(self.headers.to().unwrap())
             .build()
     }
 

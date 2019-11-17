@@ -15,6 +15,7 @@ mod config;
 mod utils;
 mod contacts;
 mod audio;
+mod streams;
 
 pub fn get_args() -> ArgMatches<'static> {
     App::new("nirahctl")
@@ -26,6 +27,7 @@ pub fn get_args() -> ArgMatches<'static> {
         .subcommand(accounts::args())
         .subcommand(contacts::args())
         .subcommand(audio::args())
+        .subcommand(streams::args())
         .subcommand(SubCommand::with_name("about"))
         .arg(Arg::with_name("verbose")
             .short("v")
@@ -44,6 +46,7 @@ pub async fn run() -> NirahResult<()> {
         ("accounts", matches) => accounts::handle(matches).await,
         ("contacts", matches) => contacts::handle(matches).await,
         ("audio", matches) => audio::handle(matches).await,
+        ("streaming", matches) => streams::handle(matches).await,
         _ => unreachable!()
     }
 }

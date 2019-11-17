@@ -30,5 +30,7 @@ pub enum RpcRequest {
     PerformTransaction { account: u32, contact: u32, transaction: NewTransactionEvent },
 
     /// Audio
-    AllAudioDevices
+    AllAudioDevices,
+    AllCurrentStreams,
+    EndCall { account: u32, call: String }
 }

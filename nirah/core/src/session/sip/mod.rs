@@ -20,6 +20,7 @@ mod invite;
 mod message;
 mod register;
 mod session;
+mod bye;
 
 pub struct SipSessionProvider {
     acc: Option<Account>,
@@ -29,7 +30,8 @@ pub struct SipSessionProvider {
     socket: Option<UdpSocket>,
     reg_timeout: Option<Instant>,
     client: Option<SoftPhone>,
-    invitations: Vec<InviteHelper>
+    invitations: Vec<InviteHelper>,
+    active: Vec<InviteHelper>
 }
 
 impl SipSessionProvider {
@@ -43,7 +45,8 @@ impl SipSessionProvider {
             socket: None,
             reg_timeout: None,
             client: None,
-            invitations: vec![]
+            invitations: vec![],
+            active: vec![]
         }
     }
 
