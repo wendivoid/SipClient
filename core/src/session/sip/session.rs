@@ -72,9 +72,6 @@ impl SessionProvider for SipSessionProvider {
                         let msg_data = format!("{}", msg);
                         let addr = account.get_socket_address();
                         socket.send_to(msg_data.as_ref(), &addr).await?;
-                    },
-                    TransactionEventData::Invitation { } => {
-
                     }
                 }
                 Ok(())

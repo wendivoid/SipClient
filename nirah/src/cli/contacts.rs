@@ -159,9 +159,6 @@ pub async fn handle(opt: Option<&ArgMatches<'static>>) -> NirahResult<()> {
                                         OptionalDisplay(Some(format!("{}",transaction.time.format("%d/%m/%Y %H:%S")))),
                                         OptionalDisplay(Some(message))
                                     ]);
-                                },
-                                TransactionEventData::Invitation { } => {
-
                                 }
                             }
                         }
