@@ -1,9 +1,5 @@
 [workspace]
 members = [
-  "nirah/nirah",
-  "nirah/core",
-  "crates/uri",
-  "crates/parse",
-  "crates/sip",
-  "crates/sdp"
+  "nirah",
+  "core"
 ]
