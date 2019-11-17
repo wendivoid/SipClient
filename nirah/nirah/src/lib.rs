@@ -13,13 +13,10 @@ use nirah_core::server::Builder;
 
 pub mod uds;
 pub mod cli;
-mod audio;
-pub use self::audio::RodioAudioProvider;
 
 pub async fn create_server() -> NirahResult<Server<UnixStream>> {
     Ok(
         Builder::new()
-         .audio(Box::new(RodioAudioProvider::new()))
          .rpc(Box::new(uds::UdsRpcProvider::new()))
          .build()?
      )

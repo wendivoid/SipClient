@@ -1,6 +1,5 @@
 use tokio::net::UdpSocket;
 use nirah_sip::client::SoftPhone;
-use nirah_sip::client::InviteHelper;
 use nirah_uri::Uri;
 use nirah_uri::UriAuth;
 use nirah_uri::Param;
@@ -15,12 +14,9 @@ use std::time::Instant;
 #[macro_use]
 mod macros;
 pub mod errors;
-mod cancel;
-mod invite;
 mod message;
 mod register;
 mod session;
-mod bye;
 
 pub struct SipSessionProvider {
     acc: Option<Account>,
@@ -29,9 +25,7 @@ pub struct SipSessionProvider {
     domain: Option<String>,
     socket: Option<UdpSocket>,
     reg_timeout: Option<Instant>,
-    client: Option<SoftPhone>,
-    invitations: Vec<InviteHelper>,
-    active: Vec<InviteHelper>
+    client: Option<SoftPhone>
 }
 
 impl SipSessionProvider {
@@ -44,9 +38,7 @@ impl SipSessionProvider {
             domain: None,
             socket: None,
             reg_timeout: None,
-            client: None,
-            invitations: vec![],
-            active: vec![]
+            client: None
         }
     }
 

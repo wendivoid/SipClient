@@ -34,12 +34,10 @@ impl RpcHandlerProvider for DefaultRpcHandler {
                 ];
                 Ok(RpcResponse::AboutNirah {
                     accounts: (ctx.accounts.nirah_provider_identifier().into(), ctx.accounts.nirah_provider_version().into()),
-                    audio: (ctx.audio.nirah_provider_identifier().into(), ctx.audio.nirah_provider_version().into()),
                     config: (ctx.config.nirah_provider_identifier().into(), ctx.config.nirah_provider_version().into()),
                     contacts: (ctx.contacts.nirah_provider_identifier().into(), ctx.contacts.nirah_provider_version().into()),
                     database: (ctx.database.nirah_provider_identifier().into(), ctx.database.nirah_provider_version().into()),
                     notifier: (ctx.notifier.nirah_provider_identifier().into(), ctx.notifier.nirah_provider_version().into()),
-                    streaming: (ctx.streaming.nirah_provider_identifier().into(), ctx.streaming.nirah_provider_version().into()),
                     rpc: ctx.rpc_details,
                     rpc_handler: ctx.rpc_handler_details,
                     sessions
@@ -140,35 +138,6 @@ impl RpcHandlerProvider for DefaultRpcHandler {
                 } else {
                     Ok(RpcResponse::AccountSessionNotActive)
                 }
-            },
-            RpcRequest::AcceptInvite { account, invite } => {
-                if let Some(account) = ctx.accounts.get_account(account).await? {
-                    for (id, session) in ctx.sessions {
-                        if &account.id == id {
-                            session.handle_event(session_ctx!(ctx), SessionEvent::AcceptInvite { invite }).await?;
-                        }
-                    }
-                }
-
-                Ok(RpcResponse::Ok)
-            },
-            RpcRequest::AllAudioDevices => {
-                Ok(RpcResponse::AudioDevices{ devices: ctx.audio.list_audio_devices().await? })
-            },
-            RpcRequest::AllCurrentStreams => {
-                Ok(RpcResponse::AllStreams { streams: ctx.streaming.list_streams().await? })
-            },
-            RpcRequest::EndCall { account, call } => {
-                if let Some(account) = ctx.accounts.get_account(account).await? {
-                    for (id, session) in ctx.sessions {
-                        if &account.id == id {
-                            let rpc_req = SessionEvent::Bye { call: (&call).into() };
-                            session.handle_event(session_ctx!(ctx), rpc_req).await?;
-                        }
-                    }
-                }
-                ctx.streaming.end_stream(streaming_ctx!(ctx), call).await?;
-                Ok(RpcResponse::Ok)
             }
         }
     }

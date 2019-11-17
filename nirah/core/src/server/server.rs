@@ -18,7 +18,6 @@ pub enum ServerEvent<T> {
 }
 
 pub struct Server<T> {
-    pub audio: AudioFuture,
     pub accounts: AccountsFuture,
     pub config: ConfigFuture,
     pub contacts: ContactsFuture,
@@ -26,7 +25,6 @@ pub struct Server<T> {
     pub notifier: NotifierFuture,
     pub rpc: RpcFuture<T>,
     pub rpc_handler: RpcHandlerFuture,
-    pub streaming: StreamingFuture,
     pub address_manager: AddressManager,
     pub sessions: HashMap<u32, SessionFuture>
 }
@@ -38,9 +36,7 @@ impl <T>Server<T> {
         self.config.register_config_settings(&self.accounts.required_config_variables()?).await?;
         self.config.register_config_settings(&self.rpc.required_config_variables()?).await?;
         self.config.register_config_settings(&self.rpc_handler.required_config_variables()?).await?;
-        self.config.register_config_settings(&self.audio.required_config_variables()?).await?;
         self.config.register_config_settings(&self.notifier.required_config_variables()?).await?;
-        self.config.register_config_settings(&self.streaming.required_config_variables()?).await?;
         self.config.register_config_settings(&SipSessionProvider::new().required_config_variables()?).await?;
         Ok(())
     }

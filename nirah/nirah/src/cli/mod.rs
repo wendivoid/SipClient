@@ -14,8 +14,6 @@ mod accounts;
 mod config;
 mod utils;
 mod contacts;
-mod audio;
-mod streams;
 
 pub fn get_args() -> ArgMatches<'static> {
     App::new("nirahctl")
@@ -26,8 +24,6 @@ pub fn get_args() -> ArgMatches<'static> {
         .subcommand(config::args())
         .subcommand(accounts::args())
         .subcommand(contacts::args())
-        .subcommand(audio::args())
-        .subcommand(streams::args())
         .subcommand(SubCommand::with_name("about"))
         .arg(Arg::with_name("verbose")
             .short("v")
@@ -45,8 +41,6 @@ pub async fn run() -> NirahResult<()> {
         ("config", matches) => config::handle(matches).await,
         ("accounts", matches) => accounts::handle(matches).await,
         ("contacts", matches) => contacts::handle(matches).await,
-        ("audio", matches) => audio::handle(matches).await,
-        ("streaming", matches) => streams::handle(matches).await,
         _ => unreachable!()
     }
 }
@@ -69,18 +63,15 @@ async fn handle_about() -> NirahResult<()> {
         align: Align::Left
     });
     if let RpcResponse::AboutNirah {
-        accounts, config, audio,
+        accounts, config,
         contacts, database, notifier,
-        rpc, rpc_handler, sessions,
-        streaming
+        rpc, rpc_handler, sessions
     } = response {
         display_table.push(vec!["accounts".to_string(), accounts.0, accounts.1]);
         display_table.push(vec!["config".to_string(), config.0, config.1]);
-        display_table.push(vec!["audio".to_string(), audio.0, audio.1]);
         display_table.push(vec!["contacts".to_string(), contacts.0, contacts.1]);
         display_table.push(vec!["database".to_string(), database.0, database.1]);
         display_table.push(vec!["notifier".to_string(), notifier.0, notifier.1]);
-        display_table.push(vec!["streaming".to_string(), streaming.0, streaming.1]);
         display_table.push(vec!["rpc".to_string(), rpc.0, rpc.1]);
         display_table.push(vec!["rpc_handler".to_string(), rpc_handler.0, rpc_handler.1]);
         for sess in sessions {

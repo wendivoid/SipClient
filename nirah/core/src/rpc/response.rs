@@ -21,16 +21,12 @@ pub enum RpcResponse {
     ContactTransactions { transactions: Vec<TransactionEvent> },
     AboutNirah {
         accounts: (String, String),
-        audio: (String, String),
         config: (String, String),
         contacts: (String, String),
         database: (String, String),
         notifier: (String, String),
-        streaming: (String, String),
         rpc: (String, String),
         rpc_handler: (String, String),
         sessions: Vec<(String, String)>
-    },
-    AudioDevices { devices: Vec<AudioDevice> },
-    AllStreams { streams: Vec<String> }
+    }
 }

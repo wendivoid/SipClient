@@ -12,7 +12,6 @@ extern crate futures;
 pub mod config;
 #[macro_use]
 pub mod server;
-pub mod audio;
 pub mod accounts;
 pub mod contacts;
 pub mod core;
@@ -20,7 +19,6 @@ pub mod rpc;
 pub mod session;
 pub mod database;
 pub mod notifier;
-pub mod streaming;
 
 pub mod prelude {
     pub use crate::core::RpcFuture;
@@ -29,16 +27,11 @@ pub mod prelude {
     pub use crate::core::AccountsFuture;
     pub use crate::core::ContactsFuture;
     pub use crate::core::DatabaseFuture;
-    pub use crate::core::AudioFuture;
     pub use crate::core::NotifierFuture;
     pub use crate::core::SessionFuture;
-    pub use crate::core::StreamingFuture;
     pub use crate::core::Provider;
     pub use crate::core::NirahResult;
     pub use crate::core::NirahError;
-    pub use crate::audio::AudioProvider;
-    pub use crate::audio::AudioDevice;
-    pub use crate::audio::AudioDirection;
     pub use crate::accounts::Account;
     pub use crate::accounts::NewAccount;
     pub use crate::accounts::AccountType;
@@ -72,17 +65,10 @@ pub mod prelude {
     pub use crate::server::Builder;
     pub use crate::server::ServerCtx;
     pub use crate::server::SessionCtx;
-    pub use crate::server::StreamingCtx;
     pub use crate::server::AddressManager;
     pub use crate::session::SessionProvider;
     pub use crate::session::SipSessionProvider;
     pub use crate::session::SessionEvent;
-    pub use crate::streaming::StreamingEvent;
-    pub use crate::streaming::StreamingProvider;
-    pub use crate::streaming::StreamingError;
-    pub use crate::streaming::NullStreamingProvider;
-    #[cfg(feature = "gstreamer")]
-    pub use crate::streaming::GStreamerProvider;
 }
 
 #[cfg(test)]
