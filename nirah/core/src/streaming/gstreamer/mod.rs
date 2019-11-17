@@ -35,7 +35,7 @@ impl GStreamerProvider {
     pub async fn get_audio_source_element(&self, cfg: &mut ConfigFuture) -> NirahResult<String> {
         let audio_input_key = VariableKey::new("audio_input_device");
         let cfg_value = __config_get_string!(cfg, audio_input_key)?;
-        Ok(format!("pulsesrc device=\"{}\"", cfg_value))
+        Ok(format!("alsasrc device={}", cfg_value))
     }
 
     pub fn get_udp_source_element(&self, port: u32, codec: &Codec) -> NirahResult<String> {
@@ -55,7 +55,7 @@ impl GStreamerProvider {
         };
         Ok(
           format!(
-            "udpsink host=\"{}\" port={}",
+            "udpsink host={} port={}",
             address,
             port
         ))
@@ -96,7 +96,7 @@ impl GStreamerProvider {
        pipeline
            .set_state(gstreamer::State::Playing)
            .expect("Unable to set the pipeline to the `Playing` state");
-
+       println!("Pipeline set to playing State");
        let run_signal = RunSignal::new();
        let mut signal = run_signal.clone();
        std::thread::spawn(move || {
@@ -189,6 +189,8 @@ impl StreamingProvider for GStreamerProvider {
         }
         if pipestring.len() > 0 {
             self.create_session(&event.call_id, &pipestring).await?;
+        } else {
+            warn!("Unable to generate Pipestring");
         }
         Ok(())
     }
