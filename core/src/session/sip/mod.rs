@@ -1,9 +1,15 @@
 use tokio::net::UdpSocket;
 use libsip::client::SoftPhone;
+use libsip::client::InviteHelper;
 use libsip::uri::Uri;
 use libsip::uri::UriAuth;
 use libsip::uri::Param;
 use libsip::core::Transport;
+use libsdp::SdpMediaType;
+use libsdp::SdpTransport;
+use libsdp::SdpCodecIdentifier;
+use libsdp::SdpSanitizer;
+use libsdp::SdpSanitizerConfig;
 use libsip::uri::parse_domain;
 
 use crate::prelude::*;
@@ -17,6 +23,9 @@ pub mod errors;
 mod message;
 mod register;
 mod session;
+mod invite;
+mod bye;
+mod cancel;
 
 pub struct SipSessionProvider {
     acc: Option<Account>,
@@ -25,7 +34,10 @@ pub struct SipSessionProvider {
     domain: Option<String>,
     socket: Option<UdpSocket>,
     reg_timeout: Option<Instant>,
-    client: Option<SoftPhone>
+    client: Option<SoftPhone>,
+    invitations: Vec<InviteHelper>,
+    active: Vec<InviteHelper>,
+    sanitizer: SdpSanitizer
 }
 
 impl SipSessionProvider {
@@ -38,7 +50,14 @@ impl SipSessionProvider {
             domain: None,
             socket: None,
             reg_timeout: None,
-            client: None
+            client: None,
+            invitations: vec![],
+            active: vec![],
+            sanitizer: SdpSanitizer::new(SdpSanitizerConfig {
+                allowed_codecs: vec![SdpCodecIdentifier(0)],
+                allowed_transports: vec![SdpTransport::RtpAvp],
+                allowed_media_types: vec![SdpMediaType::Audio]
+            })
         }
     }
 

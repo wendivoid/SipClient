@@ -10,7 +10,7 @@ mod null;
 pub use self::null::NullNotifierProvider;
 
 pub struct NotifierParams {
-    
+    pub invite_id: Option<usize>
 }
 
 pub struct NotifierArgument<'a> {

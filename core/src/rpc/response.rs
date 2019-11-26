@@ -28,5 +28,6 @@ pub enum RpcResponse {
         rpc: (String, String),
         rpc_handler: (String, String),
         sessions: Vec<(String, String)>
-    }
+    },
+    AllStreams { streams: Vec<String> }
 }

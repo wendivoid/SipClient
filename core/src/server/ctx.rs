@@ -3,6 +3,7 @@ use crate::prelude::*;
 use std::collections::HashMap;
 
 pub struct SessionCtx<'a> {
+    pub streaming: &'a mut StreamingFuture,
     pub notifier: &'a mut NotifierFuture,
     pub accounts: &'a mut AccountsFuture,
     pub config: &'a mut ConfigFuture,
@@ -11,7 +12,17 @@ pub struct SessionCtx<'a> {
     pub address_manager: &'a mut AddressManager,
 }
 
+pub struct StreamingCtx<'a> {
+    pub config: &'a mut ConfigFuture,
+    pub notifier: &'a mut NotifierFuture,
+    pub accounts: &'a mut AccountsFuture,
+    pub contacts: &'a mut ContactsFuture,
+    pub database: &'a mut DatabaseFuture,
+    pub address_manager: &'a mut AddressManager,
+}
+
 pub struct ServerCtx<'a> {
+    pub streaming: &'a mut StreamingFuture,
     pub notifier: &'a mut NotifierFuture,
     pub accounts: &'a mut AccountsFuture,
     pub config: &'a mut ConfigFuture,
@@ -34,6 +45,7 @@ macro_rules! ctx {
             database: &mut $server.database,
             address_manager: &mut $server.address_manager,
             sessions: &mut $server.sessions,
+            streaming: &mut $server.streaming,
             rpc_details: (
                 $server.rpc.nirah_provider_identifier().into(),
                 $server.rpc.nirah_provider_version().into()
@@ -50,6 +62,21 @@ macro_rules! ctx {
 macro_rules! session_ctx {
     ($server:ident) => {
         SessionCtx {
+            streaming: $server.streaming,
+            notifier: $server.notifier,
+            accounts: $server.accounts,
+            config: $server.config,
+            contacts: $server.contacts,
+            database: $server.database,
+            address_manager: $server.address_manager
+        }
+    }
+}
+
+#[macro_export]
+macro_rules! streaming_ctx {
+    ($server:ident) => {
+        StreamingCtx {
             notifier: $server.notifier,
             accounts: $server.accounts,
             config: $server.config,
@@ -64,6 +91,7 @@ macro_rules! session_ctx {
 macro_rules! session_ctx_from_server {
     ($server:ident) => {
         SessionCtx {
+            streaming: &mut $server.streaming,
             notifier: &mut $server.notifier,
             accounts: &mut $server.accounts,
             config: &mut $server.config,

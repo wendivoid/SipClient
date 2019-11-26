@@ -91,8 +91,37 @@ pub fn args() -> App<'static, 'static> {
                     .required(true)
                     .long("server")
                     .takes_value(true)
-                )
+            )
         )
+        .subcommand(SubCommand::with_name("accept")
+        .about("Accept an invitation request")
+        .arg(
+            Arg::with_name("account")
+            .help("The id of the account the invitation is for")
+            .index(1)
+            .required(true)
+        )
+        .arg(
+            Arg::with_name("invite")
+            .help("The id of the invitation to accept")
+            .index(2)
+            .required(true)
+        ))
+        .subcommand(SubCommand::with_name("end-call")
+        .about("End a currently ongoing call")
+        .arg(
+            Arg::with_name("account")
+            .help("The id of the account the invitation is for")
+            .index(1)
+            .required(true)
+        )
+        .arg(
+            Arg::with_name("call")
+            .help("The call id to end")
+            .index(2)
+            .required(true)
+        )
+    )
 }
 
 pub async fn handle(opt: Option<&ArgMatches<'static>>) -> NirahResult<()> {
@@ -180,6 +209,20 @@ pub async fn handle(opt: Option<&ArgMatches<'static>>) -> NirahResult<()> {
             ("remove", Some(matches)) => {
                 let id = value_t_or_exit!(matches, "id", u32);
                 let req = RpcRequest::RemoveAccount { id };
+                trace!("Request: {:?}", req);
+                print_response(req).await
+            },
+            ("accept", Some(matches)) => {
+                let account = value_t_or_exit!(matches, "account", u32);
+                let invite = value_t_or_exit!(matches, "invite", usize);
+                let req = RpcRequest::AcceptInvite { account, invite };
+                trace!("Request: {:?}", req);
+                print_response(req).await
+            },
+            ("end-call", Some(matches)) => {
+                let account = value_t_or_exit!(matches, "account", u32);
+                let call = value_t_or_exit!(matches, "call", String);
+                let req = RpcRequest::EndCall { account, call };
                 trace!("Request: {:?}", req);
                 print_response(req).await
             },

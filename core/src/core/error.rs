@@ -1,5 +1,6 @@
 use serde_json::Error as JsonError;
 use log::SetLoggerError;
+use libsdp::SanitizerError;
 
 use std::env::VarError;
 use std::io::Error as IoError;
@@ -21,6 +22,7 @@ pub enum NirahError {
     Json(JsonError),
     SipParseError(String, ErrorKind),
     SipRegistrationFailed(u32),
+    SdpSanitize(SanitizerError),
     InvalidContactId(u32),
     ParseIncomplete,
     SessionNotAssociatedWithAccount,
@@ -42,6 +44,7 @@ impl_simple_from!(JsonError, Json);
 impl_simple_from!(VarError, Environment);
 impl_simple_from!(SetLoggerError, Logger);
 impl_simple_from!(FromUtf8Error, FromUtf8);
+impl_simple_from!(SanitizerError, SdpSanitize);
 
 impl From<Err<(&[u8], ErrorKind)>> for NirahError {
     fn from(f: Err<(&[u8], ErrorKind)>) -> NirahError {

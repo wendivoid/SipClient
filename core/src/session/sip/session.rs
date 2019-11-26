@@ -54,6 +54,9 @@ impl SessionProvider for SipSessionProvider {
                 if let &libsip::SipMessage::Request { method, .. } = &sip_message {
                     match method {
                         Method::Message => self.handle_message(sip_message, ctx).await?,
+                        Method::Invite => self.handle_invite(sip_message, ctx).await?,
+                        Method::Bye => self.handle_bye(sip_message, ctx).await?,
+                        Method::Cancel => self.handle_cancel(sip_message, ctx).await?,
                         _ => {}
                     }
                 } else {
@@ -61,6 +64,8 @@ impl SessionProvider for SipSessionProvider {
                 }
                 Ok(())
             },
+            SessionEvent::AcceptInvite { invite } => self.accept_invite(ctx, invite).await,
+            SessionEvent::Bye { call } => self.bye(ctx, call).await,
             SessionEvent::Transaction { transaction } => {
                 match &transaction.data {
                     TransactionEventData::TextMessage { message } => {
@@ -72,6 +77,9 @@ impl SessionProvider for SipSessionProvider {
                         let msg_data = format!("{}", msg);
                         let addr = account.get_socket_address();
                         socket.send_to(msg_data.as_ref(), &addr).await?;
+                    },
+                    TransactionEventData::Invitation { } => {
+
                     }
                 }
                 Ok(())

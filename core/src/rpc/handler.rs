@@ -138,6 +138,32 @@ impl RpcHandlerProvider for DefaultRpcHandler {
                 } else {
                     Ok(RpcResponse::AccountSessionNotActive)
                 }
+            },
+            RpcRequest::AcceptInvite { account, invite } => {
+                if let Some(account) = ctx.accounts.get_account(account).await? {
+                    for (id, session) in ctx.sessions {
+                        if &account.id == id {
+                            session.handle_event(session_ctx!(ctx), SessionEvent::AcceptInvite { invite }).await?;
+                        }
+                    }
+                }
+
+                Ok(RpcResponse::Ok)
+            },
+            RpcRequest::AllCurrentStreams => {
+                Ok(RpcResponse::AllStreams { streams: ctx.streaming.list_streams().await? })
+            },
+            RpcRequest::EndCall { account, call } => {
+                if let Some(account) = ctx.accounts.get_account(account).await? {
+                    for (id, session) in ctx.sessions {
+                        if &account.id == id {
+                            let rpc_req = SessionEvent::Bye { call: (&call).into() };
+                            session.handle_event(session_ctx!(ctx), rpc_req).await?;
+                        }
+                    }
+                }
+                ctx.streaming.end_stream(streaming_ctx!(ctx), call).await?;
+                Ok(RpcResponse::Ok)
             }
         }
     }

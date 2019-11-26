@@ -11,6 +11,7 @@ pub struct Builder<T> {
     contacts: Option<ContactsFuture>,
     database: Option<DatabaseFuture>,
     notifier: Option<NotifierFuture>,
+    streaming: Option<StreamingFuture>
 }
 
 impl <T>Builder<T> {
@@ -23,7 +24,8 @@ impl <T>Builder<T> {
             accounts: None,
             contacts: None,
             database: None,
-            notifier: None
+            notifier: None,
+            streaming: None
         }
     }
 
@@ -62,6 +64,11 @@ impl <T>Builder<T> {
         self
     }
 
+    pub fn streaming(mut self, streaming: StreamingFuture) -> Builder<T> {
+        self.streaming = Some(streaming);
+        self
+    }
+
     pub fn build(self) -> io::Result<Server<T>> {
         let address_manager = AddressManager::new(5060);
         let sessions = HashMap::new();
@@ -71,11 +78,13 @@ impl <T>Builder<T> {
         let database = self.database.unwrap_or(Box::new(InMemoryDatabaseProvider::new()));
         let rpc_handler = self.rpc_handler.unwrap_or(Box::new(DefaultRpcHandler::new()));
         let notifier = self.notifier.unwrap_or(Box::new(NullNotifierProvider));
+        let streaming = self.streaming.unwrap_or(Box::new(NullStreamingProvider));
         if let Some(rpc) = self.rpc {
             Ok(Server {
                 config, accounts, rpc_handler,
                 rpc, address_manager, sessions,
-                contacts, database, notifier
+                contacts, database, notifier,
+                streaming
             })
         } else {
             Err(io::Error::new(io::ErrorKind::InvalidInput, "Rpc Provider is required"))

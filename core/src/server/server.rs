@@ -25,6 +25,7 @@ pub struct Server<T> {
     pub notifier: NotifierFuture,
     pub rpc: RpcFuture<T>,
     pub rpc_handler: RpcHandlerFuture,
+    pub streaming: StreamingFuture,
     pub address_manager: AddressManager,
     pub sessions: HashMap<u32, SessionFuture>
 }

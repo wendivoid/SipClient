@@ -15,6 +15,9 @@ pub struct TransactionEvent {
 pub enum TransactionEventData {
     TextMessage {
         message: String,
+    },
+    Invitation {
+
     }
 }
 
@@ -31,6 +34,9 @@ pub struct NewTransactionEvent {
 pub enum NewTransactionEventData {
     NewTextMessage {
         message: String,
+    },
+    NewInvitation {
+
     }
 }
 
@@ -41,6 +47,17 @@ impl NewTransactionEvent {
             NewTransactionEventData::NewTextMessage { message } => {
                 let data = TransactionEventData::TextMessage { message };
                 TransactionEvent { id,
+                    account: self.account,
+                    contact: self.contact,
+                    sent: self.sent,
+                    time: self.time,
+                    data
+                }
+            },
+            NewTransactionEventData::NewInvitation { } => {
+                let data = TransactionEventData::Invitation {};
+                TransactionEvent {
+                    id,
                     account: self.account,
                     contact: self.contact,
                     sent: self.sent,

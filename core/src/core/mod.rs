@@ -6,6 +6,7 @@ pub use self::error::NirahError;
 
 pub type NirahResult<T> = Result<T, NirahError>;
 
+pub type StreamingFuture = Box<dyn crate::streaming::StreamingProvider>;
 pub type ConfigFuture = Box<dyn crate::config::ConfigProvider>;
 pub type ContactsFuture = Box<dyn crate::contacts::ContactsProvider>;
 pub type AccountsFuture = Box<dyn crate::accounts::AccountsProvider>;
