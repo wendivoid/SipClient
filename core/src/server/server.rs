@@ -1,7 +1,7 @@
 use futures::future;
 use futures::future::Either;
 use futures::FutureExt;
-use tokio::timer::delay;
+use tokio::time::delay_until;
 
 use crate::prelude::*;
 
@@ -88,7 +88,7 @@ impl <T>Server<T> {
              let id = id.clone();
              let id2 = id.clone();
              if let Some(timeout_length) = sess.timeout_time().await? {
-                 let timeout_future = delay(timeout_length).map(move |_| id);
+                 let timeout_future = delay_until(timeout_length).map(move |_| id);
                  timeouts.push(timeout_future);
              }
              let read_future = sess.read_future().map(move |data| (id2, data));

@@ -5,8 +5,8 @@ use libsip::parse_message;
 use crate::prelude::*;
 use super::errors::*;
 
-use std::time::Duration;
-use std::time::Instant;
+use tokio::time::Duration;
+use tokio::time::Instant;
 
 #[async_trait]
 impl SessionProvider for SipSessionProvider {

@@ -2,7 +2,7 @@ use async_trait::async_trait;
 
 use crate::prelude::*;
 
-use std::time::Instant;
+use tokio::time::Instant;
 
 mod sip;
 pub use self::sip::SipSessionProvider;

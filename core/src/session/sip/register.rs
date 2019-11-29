@@ -1,4 +1,5 @@
 use crate::prelude::*;
+use tokio::time::Instant;
 use libsip::parse_message;
 
 impl SipSessionProvider {
@@ -14,7 +15,7 @@ impl SipSessionProvider {
         let response = self.read_future().await?;
         let (_, challenge_response) = parse_message(response.as_ref())?;
         if let Some(200) = challenge_response.status_code() {
-            self.reg_timeout = Some(tokio::clock::now());
+            self.reg_timeout = Some(Instant::now());
             return Ok(());
         }
         let data = if let Some(client) = &mut self.client {
@@ -30,7 +31,7 @@ impl SipSessionProvider {
         let response = self.read_future().await?;
         let (_, final_response) = parse_message(response.as_ref())?;
         if let Some(200) = final_response.status_code() {
-            self.reg_timeout = Some(tokio::clock::now());
+            self.reg_timeout = Some(Instant::now());
             Ok(())
         } else {
             trace!("Failed Sip Message: {:?}", response);

@@ -15,7 +15,7 @@ use libsip::uri::parse_domain;
 use crate::prelude::*;
 use crate::config::keys::default_ip_interface;
 
-use std::time::Instant;
+use tokio::time::Instant;
 
 #[macro_use]
 mod macros;
@@ -72,7 +72,7 @@ impl SipSessionProvider {
         self.domain = Some(format!("{}:{}", address, port));
         self.address = Some(address);
         self.acc = Some(acc.clone());
-        let socket = UdpSocket::bind(&self.domain.clone().unwrap()).await?;
+        let socket = UdpSocket::bind(self.domain.clone().unwrap()).await?;
         let mut client = SoftPhone::new(self.local_uri()?, self.account_uri()?);
         let _reg = client.registry_mut();
         _reg.username(&acc.username);
