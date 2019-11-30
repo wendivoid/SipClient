@@ -16,16 +16,19 @@ pub use self::memory::InMemoryConfigProvider;
 #[macro_use]
 mod macros;
 
+pub type ConfigDefinition = (VariableKey, Option<VariableValue>, Option<String>);
+pub type ConfigSetting = (VariableKey, Option<VariableValue>, Option<VariableValue>, Option<String>);
+
 #[async_trait]
 pub trait ConfigProvider: Provider {
 
-    async fn register_config_setting(&mut self, key: VariableKey, default: Option<VariableValue>) -> NirahResult<()>;
+    async fn register_config_setting(&mut self, setting: &ConfigDefinition) -> NirahResult<()>;
 
-    async fn register_config_settings(&mut self, settings: &[(VariableKey, Option<VariableValue>)]) -> NirahResult<()>;
+    async fn register_config_settings(&mut self, settings: &[ConfigDefinition]) -> NirahResult<()>;
 
     async fn get_config_value(&self, key: &VariableKey) -> NirahResult<Option<VariableValue>>;
 
-    async fn set_config_value(&mut self, key: &VariableKey, value: VariableValue) -> NirahResult<()>;
+    async fn set_config_value(&mut self, key: &VariableKey, value: Option<VariableValue>) -> NirahResult<()>;
 
-    async fn all_config_variables(&self) -> Vec<(VariableKey, Option<VariableValue>, Option<VariableValue>)>;
+    async fn all_config_variables(&self) -> Vec<ConfigSetting>;
 }

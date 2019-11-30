@@ -42,6 +42,8 @@ pub mod prelude {
     pub use crate::config::ConfigProvider;
     pub use crate::config::VariableValue;
     pub use crate::config::VariableKey;
+    pub use crate::config::ConfigDefinition;
+    pub use crate::config::ConfigSetting;
     pub use crate::config::InMemoryConfigProvider;
     pub use crate::contacts::ContactsProvider;
     pub use crate::contacts::Contact;

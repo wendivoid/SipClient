@@ -5,12 +5,14 @@ use crate::core::NirahResult;
 use crate::core::NirahError;
 use crate::config::VariableKey;
 use crate::config::VariableValue;
+use crate::config::ConfigDefinition;
+use crate::config::ConfigSetting;
 
 use std::collections::HashMap;
 
 use super::ConfigProvider;
 
-pub struct InMemoryConfigProvider(HashMap<VariableKey, (Option<VariableValue>, Option<VariableValue>)>);
+pub struct InMemoryConfigProvider(HashMap<VariableKey, (Option<VariableValue>, Option<VariableValue>, Option<String>)>);
 
 impl InMemoryConfigProvider {
 
@@ -32,26 +34,26 @@ impl Provider for InMemoryConfigProvider {
 
 #[async_trait]
 impl ConfigProvider for InMemoryConfigProvider {
-    async fn register_config_setting(&mut self, key: VariableKey, default: Option<VariableValue>) -> NirahResult<()> {
-        if let Some(_) = self.0.get(&key) {
-            warn!("Tried to register config variable `{:?}` that was already registered.", key);
-            Err(NirahError::InvalidConfigKey(key.clone()))
+    async fn register_config_setting(&mut self, setting: &ConfigDefinition) -> NirahResult<()> {
+        if let Some(_) = self.0.get(&setting.0) {
+            warn!("Tried to register config variable `{:?}` that was already registered.", setting.0);
+            Err(NirahError::InvalidConfigKey(setting.0.clone()))
         } else {
-            debug!("Registering config setting key: `{:?}`, default: `{:?}`", key, default);
-            self.0.insert(key.clone(), (default, None));
+            debug!("Registering config setting key: `{:?}`, default: `{:?}`", &setting.0, &setting.1);
+            self.0.insert(setting.0.clone(), (setting.1.clone(), None, setting.2.clone()));
             Ok(())
         }
     }
 
-    async fn register_config_settings(&mut self, settings: &[(VariableKey, Option<VariableValue>)]) -> NirahResult<()> {
-        for (key, value) in settings {
-            self.register_config_setting(key.clone(), value.clone()).await?;
+    async fn register_config_settings(&mut self, settings: &[ConfigDefinition]) -> NirahResult<()> {
+        for setting in settings {
+            self.register_config_setting(setting).await?;
         }
         Ok(())
     }
 
     async fn get_config_value(&self, key: &VariableKey) -> NirahResult<Option<VariableValue>> {
-        if let Some((default, value)) = self.0.get(key) {
+        if let Some((default, value, _)) = self.0.get(key) {
             if value.is_some() {
                 Ok(value.clone())
             } else {
@@ -62,16 +64,16 @@ impl ConfigProvider for InMemoryConfigProvider {
         }
     }
 
-    async fn set_config_value(&mut self, key: &VariableKey, value: VariableValue) -> NirahResult<()> {
-        if let Some((_, old_value)) = self.0.get_mut(&key) {
-            *old_value = Some(value);
+    async fn set_config_value(&mut self, key: &VariableKey, value: Option<VariableValue>) -> NirahResult<()> {
+        if let Some((_, old_value, _)) = self.0.get_mut(&key) {
+            *old_value = value;
             Ok(())
         } else {
             Err(NirahError::InvalidConfigKey(key.clone()))
         }
     }
 
-    async fn all_config_variables(&self) -> Vec<(VariableKey, Option<VariableValue>, Option<VariableValue>)> {
-        self.0.iter().map(|(a, (b, c))| (a.clone(), b.clone(), c.clone())).collect()
+    async fn all_config_variables(&self) -> Vec<ConfigSetting> {
+        self.0.iter().map(|(a, (b, c, d))| (a.clone(), b.clone(), c.clone(), d.clone())).collect()
     }
 }

@@ -98,11 +98,16 @@ pub async fn handle(opt: Option<&ArgMatches<'static>>, json_output: bool) -> Nir
                         header: "Value".into(),
                         align: Align::Left
                     });
+                    table_config.columns.insert(3, ColumnConfig {
+                        header: "Description".into(),
+                        align: Align::Left
+                    });
                     for var in vars {
                         display_table.push(vec![
                            OptionalDisplay(Some(format!("{}", var.0))),
                            OptionalDisplay(var.1.map(|item|format!("{}", item))),
-                           OptionalDisplay(var.2.map(|item|format!("{}", item)))
+                           OptionalDisplay(var.2.map(|item|format!("{}", item))),
+                           OptionalDisplay(var.3.map(|item|format!("{}", item)))
                         ]);
                     }
                     if display_table.len() == 0 {

@@ -1,6 +1,5 @@
 use super::NirahResult;
-use crate::config::VariableKey;
-use crate::config::VariableValue;
+use crate::config::ConfigDefinition;
 
 pub trait Provider: Send + Sync {
 
@@ -8,7 +7,7 @@ pub trait Provider: Send + Sync {
 
     fn nirah_provider_version(&self) -> &'static str;
 
-    fn required_config_variables(&self) -> NirahResult<Vec<(VariableKey, Option<VariableValue>)>> {
+    fn required_config_variables(&self) -> NirahResult<Vec<ConfigDefinition>> {
         Ok(vec![])
     }
 }

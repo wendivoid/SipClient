@@ -1,3 +1,4 @@
+
 use async_trait::async_trait;
 use libsdp::SdpMediaFormat;
 use libsdp::SdpAttribute;
@@ -110,10 +111,18 @@ impl Provider for GSTreamerProvider {
         env!("CARGO_PKG_VERSION")
     }
 
-    fn required_config_variables(&self) -> NirahResult<Vec<(VariableKey, Option<VariableValue>)>> {
+    fn required_config_variables(&self) -> NirahResult<Vec<ConfigDefinition>> {
         Ok(vec![
-            (VariableKey::new("audio_output_device"), Some(VariableValue::String("alsa_output.usb-Logitech_G432_Gaming_Headset_000000000000-00.analog-stereo".into()))),
-            (VariableKey::new("audio_input_device"), Some(VariableValue::String("alsa_output.pci-0000_00_1f.3.analog-stereo".into())))
+            (
+              VariableKey::new("audio_output_device"),
+              Some(VariableValue::String("alsa_output.usb-Logitech_G432_Gaming_Headset_000000000000-00.analog-stereo".into())),
+              Some("Audio output device used for streaming".into())
+            ),
+            (
+              VariableKey::new("audio_input_device"),
+              Some(VariableValue::String("alsa_output.pci-0000_00_1f.3.analog-stereo".into())),
+              Some("Audio input device used for streaming".into())
+            )
         ])
     }
 }

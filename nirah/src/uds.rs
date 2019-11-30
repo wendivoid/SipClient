@@ -7,14 +7,7 @@ use tokio::io::BufReader;
 use serde_json::from_slice;
 use serde_json::to_vec;
 
-use nirah_core::core::NirahResult;
-use nirah_core::core::Provider;
-use nirah_core::core::ConfigFuture;
-use nirah_core::config::VariableKey;
-use nirah_core::config::VariableValue;
-use nirah_core::rpc::RpcProvider;
-use nirah_core::rpc::RpcRequest;
-use nirah_core::rpc::RpcResponse;
+use nirah_core::prelude::*;
 
 use std::io;
 use std::path::PathBuf;
@@ -45,10 +38,14 @@ impl Provider for UdsRpcProvider {
         env!("CARGO_PKG_VERSION")
     }
 
-    fn required_config_variables(&self) -> NirahResult<Vec<(VariableKey, Option<VariableValue>)>> {
-        let mut arr = vec![];
-        arr.push((VariableKey::new("socket_file"), Some(VariableValue::FilePath(UdsRpcProvider::default_file_path()?))));
-        Ok(arr)
+    fn required_config_variables(&self) -> NirahResult<Vec<ConfigDefinition>> {
+        Ok(vec![
+          (
+            VariableKey::new("socket_file"),
+            Some(VariableValue::FilePath(UdsRpcProvider::default_file_path()?)),
+            Some("Unix domain socket file used for rpc".into())
+          )
+        ])
     }
 }
 

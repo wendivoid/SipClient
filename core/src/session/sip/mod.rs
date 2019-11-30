@@ -116,9 +116,13 @@ impl Provider for SipSessionProvider {
         env!("CARGO_PKG_VERSION")
     }
 
-    fn required_config_variables(&self) -> NirahResult<Vec<(VariableKey, Option<VariableValue>)>> {
+    fn required_config_variables(&self) -> NirahResult<Vec<ConfigDefinition>> {
         Ok(vec![
-            (keys::default_ip_interface(), Some(keys::default_ip_interface_value()))
+            (
+                keys::default_ip_interface(),
+                Some(keys::default_ip_interface_value()),
+                Some("Ip interface used for SIP communications".into())
+            )
         ])
     }
 }

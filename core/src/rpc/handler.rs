@@ -51,7 +51,7 @@ impl RpcHandlerProvider for DefaultRpcHandler {
                 }
             },
             RpcRequest::SetConfig { key, value } => {
-                ctx.config.set_config_value(&key, value).await?;
+                ctx.config.set_config_value(&key, Some(value)).await?;
                 Ok(RpcResponse::Ok)
             },
             RpcRequest::AllAccounts => {

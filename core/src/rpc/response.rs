@@ -15,7 +15,7 @@ pub enum RpcResponse {
     Account { acc: Account },
     AllAccounts { accounts: Vec<Account> },
     Config { value: VariableValue },
-    AllConfigVariables { vars: Vec<(VariableKey, Option<VariableValue>, Option<VariableValue>)> },
+    AllConfigVariables { vars: Vec<ConfigSetting> },
     Contact { contact: Contact },
     AllContacts { contacts: Vec<Contact> },
     ContactTransactions { transactions: Vec<TransactionEvent> },
