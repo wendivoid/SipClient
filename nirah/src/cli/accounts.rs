@@ -124,10 +124,14 @@ pub fn args() -> App<'static, 'static> {
     )
 }
 
-pub async fn handle(opt: Option<&ArgMatches<'static>>) -> NirahResult<()> {
+pub async fn handle(opt: Option<&ArgMatches<'static>>, json_output: bool) -> NirahResult<()> {
         match opt.unwrap().subcommand() {
             ("list", _) => {
                 let response = get_response(RpcRequest::AllAccounts).await?;
+                if json_output {
+                    println!("{}", serde_json::to_string(&response)?);
+                    return Ok(());
+                }
                 match response {
                     RpcResponse::AllAccounts { accounts } => {
                         let mut table_config = TableConfig::default();
@@ -186,13 +190,13 @@ pub async fn handle(opt: Option<&ArgMatches<'static>>) -> NirahResult<()> {
             ("init", Some(matches)) => {
                 let id = value_t_or_exit!(matches, "id", u32);
                 let req = RpcRequest::InitializeAccount { id };
-                print_response(req).await
+                print_response(req, json_output).await
             },
             ("get", Some(matches)) => {
                 let dex = value_t_or_exit!(matches, "index", u32);
                 let req = RpcRequest::GetAccount { id: dex };
                 trace!("Request: {:?}", req);
-                print_response(req).await
+                print_response(req, json_output).await
             },
             ("create", Some(matches)) => {
                 let new = NewAccount {
@@ -204,27 +208,27 @@ pub async fn handle(opt: Option<&ArgMatches<'static>>) -> NirahResult<()> {
                 };
                 let req = RpcRequest::CreateAccount { new };
                 trace!("Request: {:?}", req);
-                print_response(req).await
+                print_response(req, json_output).await
             },
             ("remove", Some(matches)) => {
                 let id = value_t_or_exit!(matches, "id", u32);
                 let req = RpcRequest::RemoveAccount { id };
                 trace!("Request: {:?}", req);
-                print_response(req).await
+                print_response(req, json_output).await
             },
             ("accept", Some(matches)) => {
                 let account = value_t_or_exit!(matches, "account", u32);
                 let invite = value_t_or_exit!(matches, "invite", usize);
                 let req = RpcRequest::AcceptInvite { account, invite };
                 trace!("Request: {:?}", req);
-                print_response(req).await
+                print_response(req, json_output).await
             },
             ("end-call", Some(matches)) => {
                 let account = value_t_or_exit!(matches, "account", u32);
                 let call = value_t_or_exit!(matches, "call", String);
                 let req = RpcRequest::EndCall { account, call };
                 trace!("Request: {:?}", req);
-                print_response(req).await
+                print_response(req, json_output).await
             },
             _ => unreachable!()
         }

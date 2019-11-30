@@ -59,25 +59,29 @@ pub fn args() -> App<'static, 'static> {
         )
 }
 
-pub async fn handle(opt: Option<&ArgMatches<'static>>) -> NirahResult<()> {
+pub async fn handle(opt: Option<&ArgMatches<'static>>, json_output: bool) -> NirahResult<()> {
     match opt.unwrap().subcommand() {
         ("get", Some(matches)) => {
             let key = value_t_or_exit!(matches, "key", VariableKey);
             let req = RpcRequest::GetConfig { key };
             trace!("Request: {:?}", &req);
-            print_response(req).await
+            print_response(req, json_output).await
         },
         ("set", Some(matches)) => {
             let key = value_t_or_exit!(matches, "key", VariableKey);
             let value = value_t_or_exit!(matches, "value", VariableValue);
             let req = RpcRequest::SetConfig { key, value };
             trace!("Request: {:?}", req);
-            print_response(req).await
+            print_response(req, json_output).await
         },
         ("list", _) => {
             let req = RpcRequest::AllVariables;
             trace!("Request: {:?}", req);
             let response = get_response(req).await?;
+            if json_output {
+                println!("{}", serde_json::to_string(&response)?);
+                return Ok(());
+            }
             match response {
                 RpcResponse::AllConfigVariables { vars } => {
                     let mut table_config = TableConfig::default();

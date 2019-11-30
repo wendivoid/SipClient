@@ -23,7 +23,7 @@ impl <T: fmt::Display> fmt::Display for OptionalDisplay<T> {
     }
 }
 
-pub async fn print_response(req: RpcRequest) -> NirahResult<()> {
+pub async fn print_response(req: RpcRequest, json_output: bool) -> NirahResult<()> {
     let mut stream = UnixStream::connect(UdsRpcProvider::default_file_path()?).await?;
     let mut data = to_vec(&req)?;
     data.push('\n' as u8);
@@ -35,7 +35,11 @@ pub async fn print_response(req: RpcRequest) -> NirahResult<()> {
     reader.read_until('\n' as u8, &mut buf).await?;
     trace!("Recieved Raw Data: {:?}", &buf);
     let res: RpcResponse = from_slice(&buf)?;
-    println!("{:#?}", res);
+    if json_output {
+        println!("{}", serde_json::to_string(&res)?);
+    } else {
+        println!("{:#?}", res);
+    }
     Ok(())
 }
 

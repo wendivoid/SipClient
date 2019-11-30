@@ -25,6 +25,11 @@ pub fn get_args() -> ArgMatches<'static> {
         .subcommand(accounts::args())
         .subcommand(contacts::args())
         .subcommand(SubCommand::with_name("about"))
+        .arg(Arg::with_name("json")
+            .short("j")
+            .long("json")
+            .help("Output raw JSON")
+        )
         .arg(Arg::with_name("verbose")
             .short("v")
             .multiple(true)
@@ -36,18 +41,23 @@ pub fn get_args() -> ArgMatches<'static> {
 pub async fn run() -> NirahResult<()> {
     let args = get_args();
     crate::set_log_level(args.occurrences_of("verbose"))?;
+    let json_output = args.indices_of("json").is_some();
     match args.subcommand() {
-        ("about", _) => handle_about().await,
-        ("config", matches) => config::handle(matches).await,
-        ("accounts", matches) => accounts::handle(matches).await,
-        ("contacts", matches) => contacts::handle(matches).await,
+        ("about", _) => handle_about(json_output).await,
+        ("config", matches) => config::handle(matches, json_output).await,
+        ("accounts", matches) => accounts::handle(matches, json_output).await,
+        ("contacts", matches) => contacts::handle(matches, json_output).await,
         _ => unreachable!()
     }
 }
 
-async fn handle_about() -> NirahResult<()> {
+async fn handle_about(json_output: bool) -> NirahResult<()> {
     let req = nirah_core::rpc::RpcRequest::AboutNirah;
     let response = utils::get_response(req).await?;
+    if json_output {
+        println!("{}", serde_json::to_string(&response)?);
+        return Ok(());
+    }
     let mut table_config = TableConfig::default();
     let mut display_table = vec![];
     table_config.columns.insert(0, ColumnConfig {

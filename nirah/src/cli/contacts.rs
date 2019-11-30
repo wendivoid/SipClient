@@ -78,16 +78,20 @@ pub fn args() -> App<'static, 'static> {
         )
 }
 
-pub async fn handle(opt: Option<&ArgMatches<'static>>) -> NirahResult<()> {
+pub async fn handle(opt: Option<&ArgMatches<'static>>, json_output: bool) -> NirahResult<()> {
         match opt.unwrap().subcommand() {
             ("get", Some(matches)) => {
                 let id = value_t_or_exit!(matches, "id", u32);
                 let req = RpcRequest::GetAccount { id };
                 trace!("Request: {:?}", req);
-                print_response(req).await
+                print_response(req, json_output).await
             },
             ("list", _) => {
                 let response = get_response(RpcRequest::AllContacts).await?;
+                if json_output {
+                    println!("{}", serde_json::to_string(&response)?);
+                    return Ok(());
+                }
                 match response {
                     RpcResponse::AllContacts { contacts } => {
                         let mut table_config = TableConfig::default();
@@ -130,6 +134,10 @@ pub async fn handle(opt: Option<&ArgMatches<'static>>) -> NirahResult<()> {
                 let req = RpcRequest::ContactTransactions { contact };
                 trace!("Request: {:?}", req);
                 let response = get_response(req).await?;
+                if json_output {
+                    println!("{}", serde_json::to_string(&response)?);
+                    return Ok(());
+                }
                 match response {
                     RpcResponse::ContactTransactions { transactions } => {
                         let mut table_config = TableConfig::default();
@@ -161,7 +169,7 @@ pub async fn handle(opt: Option<&ArgMatches<'static>>) -> NirahResult<()> {
                                     ]);
                                 },
                                 TransactionEventData::Invitation { } => {
-                                    
+
                                 }
                             }
                         }
@@ -194,13 +202,13 @@ pub async fn handle(opt: Option<&ArgMatches<'static>>) -> NirahResult<()> {
                 };
                 let req = RpcRequest::PerformTransaction { account, contact, transaction };
                 trace!("Request: {:?}", req);
-                print_response(req).await
+                print_response(req, json_output).await
             },
             ("create", Some(matches)) => {
                 let uri = value_t_or_exit!(matches, "uri", libsip::Uri);
                 let display_name = matches.value_of("display_name").map(|item|item.to_string());
                 let req = RpcRequest::CreateContact { contact: NewContact { uri, display_name }};
-                print_response(req).await
+                print_response(req, json_output).await
             },
             _ => unreachable!()
         }
