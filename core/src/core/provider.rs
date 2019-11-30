@@ -11,5 +11,4 @@ pub trait Provider: Send + Sync {
     fn required_config_variables(&self) -> NirahResult<Vec<(VariableKey, Option<VariableValue>)>> {
         Ok(vec![])
     }
-
 }

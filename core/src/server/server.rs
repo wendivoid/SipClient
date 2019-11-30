@@ -38,6 +38,7 @@ impl <T>Server<T> {
         self.config.register_config_settings(&self.rpc.required_config_variables()?).await?;
         self.config.register_config_settings(&self.rpc_handler.required_config_variables()?).await?;
         self.config.register_config_settings(&self.notifier.required_config_variables()?).await?;
+        self.config.register_config_settings(&self.streaming.required_config_variables()?).await?;
         self.config.register_config_settings(&SipSessionProvider::new().required_config_variables()?).await?;
         Ok(())
     }

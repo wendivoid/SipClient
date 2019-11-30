@@ -6,6 +6,7 @@ use libsdp::SdpOffer;
 mod null;
 pub use self::null::NullStreamingProvider;
 
+#[derive(Debug)]
 pub struct StreamingEvent {
     pub local_port: u32,
     pub call_id: String,

@@ -1,6 +1,7 @@
 use serde_json::Error as JsonError;
 use log::SetLoggerError;
 use libsdp::SanitizerError;
+use libsdp::SdpMediaFormat;
 
 use std::env::VarError;
 use std::io::Error as IoError;
@@ -27,6 +28,8 @@ pub enum NirahError {
     ParseIncomplete,
     SessionNotAssociatedWithAccount,
     NoNetworksAvailable,
+    SdpNoConnection,
+    InvalidMediaFormat(SdpMediaFormat)
 }
 
 macro_rules! impl_simple_from {

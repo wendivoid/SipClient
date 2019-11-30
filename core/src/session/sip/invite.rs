@@ -79,7 +79,7 @@ impl SipSessionProvider {
             let call_id = invitation.call_id()?;
             let (_, possible_sdp) = parse_sdp_offer(&invitation.body)?;
             trace!("Request SDP: {:?}", &possible_sdp);
-            if let Some((response_sdp, local_port)) = self.get_response_sdp(&mut ctx, possible_sdp.clone()).await? {
+            if let Some((cleaned_sdp, response_sdp, local_port)) = self.get_response_sdp(&mut ctx, possible_sdp.clone()).await? {
                 trace!("Response_sdp: {:?}", &response_sdp);
                 let socket = unwrap_mut_or_else_not_connected!(self, socket, "Socket not connected");
                 let account = unwrap_or_else_not_connected!(self, acc, "Account not connected");
@@ -90,7 +90,7 @@ impl SipSessionProvider {
                      local_port,
                      call_id,
                      inputs: vec![response_sdp],
-                     outputs: vec![possible_sdp]
+                     outputs: vec![cleaned_sdp]
                  };
                  ctx.streaming.handle_streams(streaming_ctx!(ctx), event).await?;
                  let new = self.invitations.remove(invite);
@@ -104,7 +104,7 @@ impl SipSessionProvider {
         Ok(())
     }
 
-    async fn get_response_sdp<'a>(&self, ctx: &mut SessionCtx<'a>, sdp: SdpOffer) -> NirahResult<Option<(SdpOffer, u32)>> {
+    async fn get_response_sdp<'a>(&self, ctx: &mut SessionCtx<'a>, sdp: SdpOffer) -> NirahResult<Option<(SdpOffer, SdpOffer, u32)>> {
         let cleaned_sdp = self.sanitizer.sanitize(sdp)?;
         let _ip_interface = default_ip_interface();
         let _default_ip_interface = default_ip_interface_value();
@@ -125,6 +125,6 @@ impl SipSessionProvider {
                                     .attribute(SdpAttribute::RtpMap(RtpMap::new(SdpEncoding::Pcmu, 8000)))
                                 )
                         );
-        Ok(Some((new, local_port)))
+        Ok(Some((cleaned_sdp, new, local_port)))
     }
 }
