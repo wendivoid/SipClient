@@ -5,6 +5,7 @@ use serde::{ Serialize, Deserialize };
 use crate::core::NirahError;
 
 #[derive(Debug, PartialEq, Clone, Serialize, Deserialize)]
+#[serde(tag = "ty", content = "value")]
 pub enum VariableValue {
     String(String),
     FilePath(PathBuf),
