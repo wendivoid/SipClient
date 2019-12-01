@@ -157,6 +157,10 @@ pub async fn handle(opt: Option<&ArgMatches<'static>>, json_output: bool) -> Nir
                             align: Align::Left
                         });
                         table_config.columns.insert(5, ColumnConfig {
+                            header: "Activate".into(),
+                            align: Align::Left
+                        });
+                        table_config.columns.insert(6, ColumnConfig {
                             header: "Vars".into(),
                             align: Align::Left
                         });
@@ -167,11 +171,13 @@ pub async fn handle(opt: Option<&ArgMatches<'static>>, json_output: bool) -> Nir
                                 OptionalDisplay(Some(account.username)),
                                 OptionalDisplay(Some(account.password)),
                                 OptionalDisplay(Some(account.host)),
+                                OptionalDisplay(Some(format!("{:?}", account.activate))),
                                 OptionalDisplay(Some(format!("{:?}", account.vars)))
                             ]);
                         }
                         if display_table.len() == 0 {
                             display_table.push(vec![
+                                OptionalDisplay(None),
                                 OptionalDisplay(None),
                                 OptionalDisplay(None),
                                 OptionalDisplay(None),
@@ -204,6 +210,7 @@ pub async fn handle(opt: Option<&ArgMatches<'static>>, json_output: bool) -> Nir
                     username: value_t_or_exit!(matches, "user", String),
                     password: value_t_or_exit!(matches, "pass", String),
                     host: value_t_or_exit!(matches, "server", String),
+                    activate: matches.is_present("activate"),
                     vars: HashMap::new()
                 };
                 let req = RpcRequest::CreateAccount { new };

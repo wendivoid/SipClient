@@ -46,6 +46,13 @@ impl <T>Server<T> {
     pub async fn mainloop(mut self) -> NirahResult<()> {
         self.initialize_config().await?;
         self.rpc.connect(&mut self.config).await?;
+
+        for account in &self.accounts.all_accounts().await {
+            if account.activate {
+                let req = RpcRequest::InitializeAccount { id: account.id };
+                self.rpc_handler.handle(req, ctx!(self)).await?;
+            }
+        }
         loop {
             match self.run_once().await {
                 Ok(ServerEvent::RpcRequest(msg, peer)) => {

@@ -41,7 +41,7 @@ pub fn get_args() -> ArgMatches<'static> {
 pub async fn run() -> NirahResult<()> {
     let args = get_args();
     crate::set_log_level(args.occurrences_of("verbose"))?;
-    let json_output = args.indices_of("json").is_some();
+    let json_output = args.is_present("json");
     match args.subcommand() {
         ("about", _) => handle_about(json_output).await,
         ("config", matches) => config::handle(matches, json_output).await,

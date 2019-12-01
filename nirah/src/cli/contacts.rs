@@ -82,7 +82,7 @@ pub async fn handle(opt: Option<&ArgMatches<'static>>, json_output: bool) -> Nir
         match opt.unwrap().subcommand() {
             ("get", Some(matches)) => {
                 let id = value_t_or_exit!(matches, "id", u32);
-                let req = RpcRequest::GetAccount { id };
+                let req = RpcRequest::GetContact { id };
                 trace!("Request: {:?}", req);
                 print_response(req, json_output).await
             },

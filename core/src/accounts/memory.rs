@@ -17,6 +17,7 @@ impl InMemoryAccountsProvider {
                 username: "20".into(),
                 password: "program".into(),
                 host: "192.168.1.133".into(),
+                activate: true,
                 vars: HashMap::new()
             }
         ])
@@ -46,6 +47,7 @@ impl AccountsProvider for InMemoryAccountsProvider {
            username: new.username,
            password: new.password,
            host: new.host,
+           activate: new.activate,
            vars: new.vars
        });
        Ok(id)

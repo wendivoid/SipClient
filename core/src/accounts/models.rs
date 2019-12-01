@@ -12,6 +12,7 @@ pub struct NewAccount {
     pub username: String,
     pub password: String,
     pub host: String,
+    pub activate: bool,
     pub vars: HashMap<String, String>
 }
 
@@ -22,6 +23,7 @@ pub struct Account {
     pub username: String,
     pub password: String,
     pub host: String,
+    pub activate: bool,
     pub vars: HashMap<String, String>
 }
 
