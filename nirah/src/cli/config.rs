@@ -104,10 +104,10 @@ pub async fn handle(opt: Option<&ArgMatches<'static>>, json_output: bool) -> Nir
                     });
                     for var in vars {
                         display_table.push(vec![
-                           OptionalDisplay(Some(format!("{}", var.0))),
-                           OptionalDisplay(var.1.map(|item|format!("{}", item))),
-                           OptionalDisplay(var.2.map(|item|format!("{}", item))),
-                           OptionalDisplay(var.3.map(|item|format!("{}", item)))
+                           OptionalDisplay(Some(format!("{}", var.key))),
+                           OptionalDisplay(var.default.map(|item|format!("{}", item))),
+                           OptionalDisplay(var.value.map(|item|format!("{}", item))),
+                           OptionalDisplay(var.description.map(|item|format!("{}", item)))
                         ]);
                     }
                     if display_table.len() == 0 {

@@ -1,4 +1,5 @@
 use async_trait::async_trait;
+use serde::{ Serialize, Deserialize };
 
 use crate::core::Provider;
 use crate::core::NirahResult;
@@ -16,8 +17,20 @@ pub use self::memory::InMemoryConfigProvider;
 #[macro_use]
 mod macros;
 
-pub type ConfigDefinition = (VariableKey, Option<VariableValue>, Option<String>);
-pub type ConfigSetting = (VariableKey, Option<VariableValue>, Option<VariableValue>, Option<String>);
+#[derive(Debug, PartialEq, Clone, Serialize, Deserialize)]
+pub struct ConfigDefinition {
+    pub key: VariableKey,
+    pub default: Option<VariableValue>,
+    pub description: Option<String>
+}
+
+#[derive(Debug, PartialEq, Clone, Serialize, Deserialize)]
+pub struct ConfigSetting {
+    pub key: VariableKey,
+    pub default: Option<VariableValue>,
+    pub value: Option<VariableValue>,
+    pub description: Option<String>
+}
 
 #[async_trait]
 pub trait ConfigProvider: Provider {

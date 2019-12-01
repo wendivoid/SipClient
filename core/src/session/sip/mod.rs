@@ -118,11 +118,11 @@ impl Provider for SipSessionProvider {
 
     fn required_config_variables(&self) -> NirahResult<Vec<ConfigDefinition>> {
         Ok(vec![
-            (
-                keys::default_ip_interface(),
-                Some(keys::default_ip_interface_value()),
-                Some("Ip interface used for SIP communications".into())
-            )
+            ConfigDefinition {
+                key: keys::default_ip_interface(),
+                default: Some(keys::default_ip_interface_value()),
+                description: Some("Ip interface used for SIP communications".into())
+            }
         ])
     }
 }

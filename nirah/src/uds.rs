@@ -40,11 +40,11 @@ impl Provider for UdsRpcProvider {
 
     fn required_config_variables(&self) -> NirahResult<Vec<ConfigDefinition>> {
         Ok(vec![
-          (
-            VariableKey::new("socket_file"),
-            Some(VariableValue::FilePath(UdsRpcProvider::default_file_path()?)),
-            Some("Unix domain socket file used for rpc".into())
-          )
+          ConfigDefinition {
+            key: VariableKey::new("socket_file"),
+            default: Some(VariableValue::FilePath(UdsRpcProvider::default_file_path()?)),
+            description: Some("Unix domain socket file used for rpc".into())
+          }
         ])
     }
 }
