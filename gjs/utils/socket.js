@@ -41,6 +41,18 @@ var NirahSocket = class nirahSocket {
     let res = this.read_message();
     if(res.response == 'Ok') {
       func(res);
+    } else {
+      print(JSON.stringify(res));
+    }
+  }
+
+  send_then_expect(msg, expected, func) {
+    this.send_message(msg);
+    let res = this.read_message();
+    if(res.response == expected) {
+      func(res);
+    } else {
+      print(JSON.stringify(res));
     }
   }
 

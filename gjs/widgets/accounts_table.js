@@ -9,7 +9,7 @@ const { NirahSocket } = imports.utils.socket;
 var AccountsTable = class accountsTable {
   constructor() {
       let self = this;
-      this._treeview = new Gtk.TreeView({ expand: true });
+      this._treeview = new Gtk.TreeView({ margin: 20, expand: true });
       this._store = new Gtk.ListStore();
       this._store.set_column_types([
         GObj.TYPE_INT,
@@ -118,16 +118,6 @@ AccountsTable.prototype.updatePass = function (pass, label) {
 AccountsTable.prototype.updateHost = function (host, label) {
   let iter = this._store.get_iter (Gtk.TreePath.new_from_string(host))[1];
   this._store.set_value(iter, 3, label);
-};
-
-AccountsTable.prototype.renderUser = function (col, cell, model, iter) {
-  cell.editable = true;
-  cell.text = model.get_value(iter, 1);
-};
-
-AccountsTable.prototype.renderPass = function (col, cell, model, iter) {
-  cell.editable = true;
-  cell.text = model.get_value(iter, 2);
 };
 
 AccountsTable.prototype.renderUser = function (col, cell, model, iter) {

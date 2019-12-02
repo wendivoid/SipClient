@@ -3,13 +3,15 @@
 const Gtk   = imports.gi.Gtk;
 const GLib  = imports.gi.GLib;
 const { AccountsTable } = imports.widgets.accounts_table;
+const { AboutWidget } = imports.widgets.about;
 
 var PreferencesWindow = function () {
     this.title = 'Nirah Preferences';
     this.window = new Gtk.Window({
       default_height: 300,
       default_width: 620,
-      window_position: Gtk.WindowPosition.CENTER });
+      window_position: Gtk.WindowPosition.CENTER
+    });
     this.window.set_title(this.title);
     this.label = new Gtk.Label({ label: "..." });
     this.box = new Gtk.Box({orientation: Gtk.Orientation.VERTICAL });
@@ -20,8 +22,10 @@ var PreferencesWindow = function () {
     this.headerBox.pack_start(this.stackSwitcher, false, true, 0);
     this.box.pack_start(this.headerBox, false, true, 0);
     this.box.pack_end(this.stack, true, true, 0);
-    let accountsTable = new AccountsTable({ margin: 20 });
-    this.stack.add_titled(accountsTable.widget(), "check", "Accounts");
+    let accountsTable = new AccountsTable();
+    let aboutWidget = new AboutWidget();
+    this.stack.add_titled(aboutWidget.widget(), "about", "About");
+    this.stack.add_titled(accountsTable.widget(), "accounts", "Accounts");
     this.window.add(this.box);
     this.window.show_all();
 
