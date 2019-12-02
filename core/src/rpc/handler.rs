@@ -76,6 +76,34 @@ impl RpcHandlerProvider for DefaultRpcHandler {
                 ctx.accounts.edit_account(account).await?;
                 Ok(RpcResponse::Ok)
             },
+            RpcRequest::EditAccountUsername { account, username } => {
+                if let Some(mut account) = ctx.accounts.get_account(account).await? {
+                    account.username = username;
+                    ctx.accounts.edit_account(account).await?;
+                }
+                Ok(RpcResponse::Ok)
+            },
+            RpcRequest::EditAccountPassword { account, password } => {
+                if let Some(mut account) = ctx.accounts.get_account(account).await? {
+                    account.password = password;
+                    ctx.accounts.edit_account(account).await?;
+                }
+                Ok(RpcResponse::Ok)
+            },
+            RpcRequest::EditAccountHost { account, host } => {
+                if let Some(mut account) = ctx.accounts.get_account(account).await? {
+                    account.host = host;
+                    ctx.accounts.edit_account(account).await?;
+                }
+                Ok(RpcResponse::Ok)
+            },
+            RpcRequest::EditAccountActivation { account } => {
+                if let Some(mut account) = ctx.accounts.get_account(account).await? {
+                    account.activate = !account.activate;
+                    ctx.accounts.edit_account(account).await?;
+                }
+                Ok(RpcResponse::Ok)
+            },
             RpcRequest::AllVariables => {
                 Ok(RpcResponse::AllConfigVariables { vars: ctx.config.all_config_variables().await})
             },
