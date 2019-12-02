@@ -35,4 +35,36 @@ var NirahSocket = class nirahSocket {
     let [output, count] = output_reader.read_line(null);
     return JSON.parse(imports.byteArray.toString(output));
   }
+
+  send_then(msg, func) {
+    this.send_message(msg);
+    let res = this.read_message();
+    if(res.response == 'Ok') {
+      func(res);
+    }
+  }
+
+  editAccountUsernameRequest(account, username) {
+    return {
+      method: 'EditAccountUsername',
+      account,
+      username
+    };
+  }
+
+  editAccountPasswordRequest(account, password) {
+    return {
+      method: 'EditAccountPassword',
+      account,
+      password
+    };
+  }
+
+  editAccountHostnameRequest(account, host) {
+    return {
+      method: 'EditAccountHost',
+      account,
+      host
+    };
+  }
 };
