@@ -1,15 +1,7 @@
 #!/usr/bin/gjs
 
-/*
-GJS example showing how to build Gtk javascript applications
-using Gtk TreeView and ListStore
-Run it with:
-    gjs egList.js
-*/
-
 const Gio   = imports.gi.Gio;
 const GLib  = imports.gi.GLib;
-const GObj  = imports.gi.GObject;
 const Gtk   = imports.gi.Gtk;
 const Lang  = imports.lang;
 
@@ -30,12 +22,10 @@ function getAppFileInfo() {
 }
 const path = getAppFileInfo()[1];
 imports.searchPath.push(path);
-
-const { NirahSocket } = imports.utils.socket;
-const { AccountsTable } = imports.widgets.accounts_table;
+const { PreferencesWindow } = imports.preferences;
 
 const App = function () {
-    this.title = 'Accounts Table Example';
+    this.title = 'Nirah';
     GLib.set_prgname(this.title);
 };
 
@@ -60,19 +50,66 @@ App.prototype.onStartup = function() {
 App.prototype.buildUI = function() {
 
     this.window = new Gtk.ApplicationWindow({ application: this.application,
-                                              default_height: 300,
-                                              default_width: 720,
+                                              default_height: 450,
+                                              default_width: 300,
                                               window_position: Gtk.WindowPosition.CENTER });
-    this.window.add(this.getBody());
+    try {
+        this.window.set_icon_from_file(path + '/assets/appIcon.png');
+    } catch (err) {
+        this.window.set_icon_name('application-x-executable');
+    }
+
+    this.window.set_titlebar(this.getHeader());
+
+    this.label = new Gtk.Label({ label: "..." });
+    this.window.add(this.label);
 };
-App.prototype.getBody = function () {
 
-    let box, accounts_table;
+App.prototype.getHeader = function () {
 
-    box = new Gtk.Box({ vexpand: true });
-    accounts_table = new AccountsTable();
-    box.add(accounts_table.widget());
-    return box;
+    let headerBar, headerStart, imageNew, buttonNew, popMenu, imageMenu, buttonMenu;
+
+    headerBar = new Gtk.HeaderBar();
+    headerBar.set_title(this.title);
+    headerBar.set_show_close_button(true);
+
+    headerStart = new Gtk.Grid({ column_spacing: headerBar.spacing });
+
+    headerBar.pack_start(headerStart);
+
+    popMenu = new Gtk.Popover();
+    imageMenu = new Gtk.Image ({ icon_name: 'open-menu-symbolic', icon_size: Gtk.IconSize.SMALL_TOOLBAR });
+    buttonMenu = new Gtk.MenuButton({ image: imageMenu });
+    buttonMenu.set_popover(popMenu);
+    popMenu.set_size_request(-1, -1);
+    buttonMenu.set_menu_model(this.getMenu());
+
+    headerBar.pack_start(buttonMenu);
+
+    return headerBar;
+};
+
+App.prototype.getMenu = function () { /* GMenu popover */
+
+    let menu, section, submenu;
+
+    menu = new Gio.Menu();
+
+    section = new Gio.Menu();
+    section.append("Preferences", 'app.toggleMenu');
+    menu.append_section(null, section);
+
+    let actionToggleMenu = new Gio.SimpleAction ({ name: 'toggleMenu' });
+        actionToggleMenu.connect('activate', () => {
+                new PreferencesWindow();
+            });
+        this.application.add_action(actionToggleMenu);
+    return menu;
+};
+
+App.prototype.printText = function (text) {
+
+    print(text);
 };
 
 //Run the application
