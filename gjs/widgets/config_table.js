@@ -14,7 +14,8 @@ var ConfigTable = class configTable {
       this._store = new Gtk.ListStore();
       this._store.set_column_types([
         GObj.TYPE_STRING, GObj.TYPE_STRING,
-        GObj.TYPE_STRING, GObj.TYPE_STRING
+        GObj.TYPE_STRING, GObj.TYPE_STRING,
+        GObj.TYPE_STRING
       ]);
       this._treeview = new Gtk.TreeView();
       this._keyCol = new Gtk.TreeViewColumn({ expand: false, title: 'Key' });
@@ -60,12 +61,19 @@ var ConfigTable = class configTable {
   }
 
   addItems(result, widget) {
+    let self = this;
     result.vars.forEach(function (item) {
       let key = item.key ? item.key : '';
       let value = item.value ? item.value.value : '';
       let default_value = item.default.value ? item.default.value : '';
       let ty = item.default.ty ? item.default.ty : '';
-      widget._store.set(widget._store.append(), [0, 1, 2, 3], [key, value, default_value, ty]);
+      let description = item.description ? item.description : '';
+      let iter = widget._store.append();
+      widget._store.set(iter, [0, 1, 2, 3, 4], [key, value, default_value, ty, description]);
+      let tooltip = new  Gtk.Tooltip();
+      tooltip.set_text("This is the tooltip");
+      let path = self._store.get_path(iter);
+      widget._treeview.set_tooltip_column(4);
     });
   }
 };

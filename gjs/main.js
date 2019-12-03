@@ -23,6 +23,7 @@ function getAppFileInfo() {
 const path = getAppFileInfo()[1];
 imports.searchPath.push(path);
 const { PreferencesWindow } = imports.preferences;
+const { HistoryPage } = imports.pages.history;
 
 const App = function () {
     this.title = 'Nirah';
@@ -53,16 +54,13 @@ App.prototype.buildUI = function() {
                                               default_height: 450,
                                               default_width: 300,
                                               window_position: Gtk.WindowPosition.CENTER });
-    try {
-        this.window.set_icon_from_file(path + '/assets/appIcon.png');
-    } catch (err) {
-        this.window.set_icon_name('application-x-executable');
-    }
 
     this.window.set_titlebar(this.getHeader());
 
-    this.label = new Gtk.Label({ label: "..." });
-    this.window.add(this.label);
+    this._stack = new Gtk.Stack();
+    this._transactions = new HistoryPage();
+    this._stack.add_titled(this._transactions.widget(), "history", "History");
+    this.window.add(this._stack);
 };
 
 App.prototype.getHeader = function () {
