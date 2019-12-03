@@ -5,6 +5,7 @@ const Gtk   = imports.gi.Gtk;
 const GObj  = imports.gi.GObject;
 
 const { NirahSocket } = imports.utils.socket;
+const { AccountHistory } = imports.widgets.account_history;
 
 var HistoryPage = class historyPage {
   constructor() {
@@ -19,9 +20,11 @@ var HistoryPage = class historyPage {
       this._accountsCombo.pack_start(this._accountsComboRenderer, false);
       this._accountsCombo.add_attribute (this._accountsComboRenderer, "text", 1);
       this._scrolledWindow = new Gtk.ScrolledWindow({ expand: true });
+      this._history = new AccountHistory();
       this._addButton = new Gtk.Button({ label: '+' });
       this._component.add(this._accountsCombo);
       this._component.add(this._scrolledWindow);
+      this._scrolledWindow.add(this._history.widget());
       this._component.add(this._addButton);
       this.loadAccounts();
       this._accountsCombo.connect('changed', function () {
@@ -49,6 +52,6 @@ var HistoryPage = class historyPage {
   }
 
   loadTransactions(account) {
-    log(JSON.stringify(account));
+    this._history.loadAccount(account);
   }
 };

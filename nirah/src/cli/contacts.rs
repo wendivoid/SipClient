@@ -42,7 +42,7 @@ pub fn args() -> App<'static, 'static> {
              .arg(
                  Arg::with_name("id")
                      .help("The id of the contact")
-                     .index(1)
+                     .index(2)
                      .required(true)
              )
         )
@@ -79,6 +79,8 @@ pub fn args() -> App<'static, 'static> {
              )
              .arg(
                  Arg::with_name("display_name")
+                     .short("n")
+                     .long("name")
                      .takes_value(true)
              )
         )

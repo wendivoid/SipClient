@@ -44,7 +44,7 @@ impl DatabaseProvider for InMemoryDatabaseProvider {
                         continue;
                     }
                 }
-               output.push((contact.clone(), transactions.get(0).map(|item|item.clone())));
+               output.push((contact.clone(), transactions.iter().last().map(|item|item.clone())));
             }
         }
         Ok(output)

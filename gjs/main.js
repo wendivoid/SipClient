@@ -24,6 +24,7 @@ const path = getAppFileInfo()[1];
 imports.searchPath.push(path);
 const { PreferencesWindow } = imports.preferences;
 const { HistoryPage } = imports.pages.history;
+const { ContactsPage } = imports.pages.contacts;
 
 const App = function () {
     this.title = 'Nirah';
@@ -59,7 +60,9 @@ App.prototype.buildUI = function() {
 
     this._stack = new Gtk.Stack();
     this._transactions = new HistoryPage();
+    this._contacts = new ContactsPage();
     this._stack.add_titled(this._transactions.widget(), "history", "History");
+    this._stack.add_titled(this._contacts.widget(), "contacts", "Contacts");
     this.window.add(this._stack);
 };
 
@@ -89,11 +92,13 @@ App.prototype.getHeader = function () {
 
 App.prototype.getMenu = function () { /* GMenu popover */
 
-    let menu, section, submenu;
+    let menu, section, submenu, self;
 
+    self = this;
     menu = new Gio.Menu();
 
     section = new Gio.Menu();
+    section.append("Contacts", 'app.toContactsPage');
     section.append("Preferences", 'app.toggleMenu');
     menu.append_section(null, section);
 
@@ -102,6 +107,11 @@ App.prototype.getMenu = function () { /* GMenu popover */
                 new PreferencesWindow();
             });
         this.application.add_action(actionToggleMenu);
+    let actionToContactsPage = new Gio.SimpleAction ({ name: 'toContactsPage' });
+    actionToContactsPage.connect('activate', () => {
+          self._stack.set_visible_child_name("contacts");
+    });
+    this.application.add_action(actionToContactsPage);
     return menu;
 };
 
