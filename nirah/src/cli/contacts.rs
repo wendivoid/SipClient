@@ -34,6 +34,12 @@ pub fn args() -> App<'static, 'static> {
              .about("Show the transaction log for a contact")
              .setting(AppSettings::ArgRequiredElseHelp)
              .arg(
+                 Arg::with_name("account")
+                     .help("The account id")
+                     .index(1)
+                     .required(true)
+             )
+             .arg(
                  Arg::with_name("id")
                      .help("The id of the contact")
                      .index(1)
@@ -131,7 +137,8 @@ pub async fn handle(opt: Option<&ArgMatches<'static>>, json_output: bool) -> Nir
             },
             ("log", Some(matches)) => {
                 let contact = value_t_or_exit!(matches, "id", u32);
-                let req = RpcRequest::ContactTransactions { contact };
+                let account = value_t_or_exit!(matches, "account", u32);
+                let req = RpcRequest::ContactTransactions { account, contact };
                 trace!("Request: {:?}", req);
                 let response = get_response(req).await?;
                 if json_output {

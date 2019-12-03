@@ -23,8 +23,8 @@ impl SipSessionProvider {
                         message: String::from_utf8(helper.data())?
                     }
                 };
-                let log_id = ctx.database.log(contact.id, logged_message).await?;
-                let msg = ctx.database.get_log(contact.id, log_id).await?.unwrap();
+                let log_id = ctx.database.log(account.id, contact.id, logged_message).await?;
+                let msg = ctx.database.get_log(account.id, contact.id, log_id).await?.unwrap();
                 let params = NotifierParams {
                      invite_id: None
                 };
@@ -42,8 +42,8 @@ impl SipSessionProvider {
                         message: String::from_utf8(helper.data())?
                     }
                 };
-                let log_id = ctx.database.log(id, logged_message).await?;
-                let msg = ctx.database.get_log(id, log_id).await?.unwrap();
+                let log_id = ctx.database.log(account.id, id, logged_message).await?;
+                let msg = ctx.database.get_log(account.id, id, log_id).await?.unwrap();
                 let contact = ctx.contacts.get_contact(id).await?.unwrap();
                 let params = NotifierParams {
                     invite_id: None

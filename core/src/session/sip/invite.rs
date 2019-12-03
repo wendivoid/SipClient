@@ -35,8 +35,8 @@ impl SipSessionProvider {
 
                     }
                 };
-                let log_id = ctx.database.log(contact.id, new_msg).await?;
-                let logged_message = ctx.database.get_log(contact.id, log_id).await?.unwrap();
+                let log_id = ctx.database.log(account.id, contact.id, new_msg).await?;
+                let logged_message = ctx.database.get_log(account.id, contact.id, log_id).await?.unwrap();
                 let invite_id = self.invitations.len();
                 self.invitations.push(helper);
                 let params = NotifierParams {
@@ -57,8 +57,8 @@ impl SipSessionProvider {
 
                     }
                 };
-                let log_id = ctx.database.log(id, logged_message).await?;
-                let msg = ctx.database.get_log(id, log_id).await?.unwrap();
+                let log_id = ctx.database.log(account.id, id, logged_message).await?;
+                let msg = ctx.database.get_log(account.id, id, log_id).await?.unwrap();
                 let contact = ctx.contacts.get_contact(id).await?.unwrap();
                 let invite_id = self.invitations.len();
                 self.invitations.push(helper);

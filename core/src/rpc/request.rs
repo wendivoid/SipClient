@@ -30,7 +30,8 @@ pub enum RpcRequest {
     CreateContact { contact: NewContact },
     EditContact { contact: Contact },
     RemoveContact { id: u32 },
-    ContactTransactions { contact: u32 },
+    ContactTransactions { account: u32, contact: u32 },
+    AccountTransactions { account: u32 },
     PerformTransaction { account: u32, contact: u32, transaction: NewTransactionEvent },
     AllCurrentStreams,
     EndCall { account: u32, call: String }

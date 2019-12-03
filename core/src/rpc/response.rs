@@ -19,6 +19,7 @@ pub enum RpcResponse {
     Contact { contact: Contact },
     AllContacts { contacts: Vec<Contact> },
     ContactTransactions { transactions: Vec<TransactionEvent> },
+    AccountTransactions { transactions: Vec<(u32, Option<TransactionEvent>)> },
     AboutNirah {
         accounts: (String, String),
         config: (String, String),

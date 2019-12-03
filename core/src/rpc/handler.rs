@@ -138,12 +138,16 @@ impl RpcHandlerProvider for DefaultRpcHandler {
             RpcRequest::AllContacts => {
                 Ok(RpcResponse::AllContacts { contacts: ctx.contacts.all_contacts().await })
             },
-            RpcRequest::ContactTransactions { contact } => {
-                if let Some(contact_data) = ctx.database.contact_transactions(contact).await {
+            RpcRequest::ContactTransactions { account, contact } => {
+                if let Some(contact_data) = ctx.database.contact_transactions(account, contact).await {
                     Ok(RpcResponse::ContactTransactions { transactions: contact_data.clone() })
                 } else {
                     Ok(RpcResponse::InvalidContact { id: contact })
                 }
+            },
+            RpcRequest::AccountTransactions { account } => {
+                let output = ctx.database.account_transactions(account).await?;
+                Ok(RpcResponse::AccountTransactions { transactions: output })
             },
             RpcRequest::PerformTransaction { account, contact, transaction } => {
                 let contact = if let Some(contact) = ctx.contacts.get_contact(contact).await? {
@@ -158,8 +162,8 @@ impl RpcHandlerProvider for DefaultRpcHandler {
                     }
                 }
                 if let Some(sess_id) = sess_index {
-                    let transaction_id = ctx.database.log(contact.id, transaction).await?;
-                    let transaction = ctx.database.get_log(contact.id, transaction_id).await?.unwrap().clone();
+                    let transaction_id = ctx.database.log(account, contact.id, transaction).await?;
+                    let transaction = ctx.database.get_log(account, contact.id, transaction_id).await?.unwrap().clone();
                     let session = ctx.sessions.get_mut(&sess_id).unwrap();
                     session.handle_event(session_ctx!(ctx), SessionEvent::Transaction { transaction }).await?;
                     Ok(RpcResponse::Ok)
