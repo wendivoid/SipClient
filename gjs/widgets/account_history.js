@@ -5,11 +5,13 @@ const Gtk   = imports.gi.Gtk;
 const GObj  = imports.gi.GObject;
 
 const { NirahSocket } = imports.utils.socket;
+const { TransactionWidget } = imports.widgets.transaction;
 
 var AccountHistory = class accountHistory {
-  constructor() {
+  constructor(account) {
       let self = this;
       this._component = new Gtk.ListBox({ margin: 7, expand: true });
+      this._component.show_all();
   }
 
   widget() {
@@ -19,23 +21,22 @@ var AccountHistory = class accountHistory {
   loadAccount(account) {
     let self = this;
     let client = new NirahSocket();
-    client.connect();
-    let req = { method: 'GetAccount', account: account };
+    let req = { method: 'GetAccount', id: account };
+    client.send_then_expect(req, 'Account', function (item) {
+        self.account = item;
+    });
     req = { method: 'AccountTransactions', account: account };
+    client = new NirahSocket();
     client.send_then_expect(req, 'AccountTransactions', function (item) {
-      log(JSON.stringify(item.transactions));
-      let row = new Gtk.ListBoxRow();
-      let vbox = new Gtk.VBox();
-      let top_row = new Gtk.Box();
-      let middle_row = new Gtk.Box();
-      let bottom_row = new Gtk.Box();
-      top_row.add(new Gtk.Label({ label: JSON.stringify(item) }));
-
-      vbox.add(top_row);
-      vbox.add(middle_row);
-      vbox.add(bottom_row);
-      row.add(vbox);
-      self._component.add(row);
-    })
+      item.transactions.forEach(function (transaction) {
+        let req = { method: 'GetContact', id: transaction[1].contact };
+        log(JSON.stringify(transaction));
+        client.send_then_expect(req, 'Contact', function (item) {
+          self.contact = item.contact;
+        });
+        self._component.add(new TransactionWidget(self.account, self.contact, transaction).widget());
+        self._component.show_all();
+      });
+    });
   }
 };

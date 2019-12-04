@@ -34,15 +34,10 @@ var AboutWidget = class aboutWidget {
       this._treeview.append_column(this._nameCol);
       this._treeview.append_column(this._verCol);
       this._component.add(this._treeview);
-      if(client.connect()) {
-        let self = this;
-        let req = { 'method': 'AboutNirah' };
-        client.send_then_expect(req, 'AboutNirah', function(res) {
-          self.addItems(res, self)
-        });
-      } else {
-        print("Failed to connect to nirah socket");
-      }
+      let req = { 'method': 'AboutNirah' };
+      client.send_then_expect(req, 'AboutNirah', function(res) {
+        self.addItems(res, self)
+      });
   }
 
   widget() {

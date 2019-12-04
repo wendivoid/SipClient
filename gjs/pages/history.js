@@ -41,7 +41,6 @@ var HistoryPage = class historyPage {
 
   loadAccounts() {
     let client = new NirahSocket();
-    client.connect();
     let self = this;
     let req = { method: 'AllAccounts' };
     client.send_then_expect(req, 'AllAccounts', function (res) {

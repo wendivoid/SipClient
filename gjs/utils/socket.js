@@ -14,25 +14,30 @@ var NirahSocket = class nirahSocket {
       this._conn = this._sock.connect(this._addr, null);
       return true;
     } catch(_err) {
+      log(_err);
       return false;
     }
   }
 
   send_message(msg) {
-    let data;
-    try {
-      data = JSON.stringify(msg);
-      this._conn.get_output_stream()
-          .write_all(data+'\n', null);
-    } catch(err) {
-      log("Failed to send rpc message");
+    if(this.connect()) {
+      let data;
+      try {
+        data = JSON.stringify(msg);
+        this._conn.get_output_stream()
+        .write_all(data+'\n', null);
+      } catch(err) {
+        log("Failed to send rpc message: "+err.toString());
+      }
+    } else {
+        log("Failed to connect to nirah socket.");
     }
-
   }
 
   read_message() {
     let output_reader = Gio.DataInputStream.new(this._conn.get_input_stream());
     let [output, count] = output_reader.read_line(null);
+    print(JSON.stringify(imports.byteArray.toString(output)));
     return JSON.parse(imports.byteArray.toString(output));
   }
 

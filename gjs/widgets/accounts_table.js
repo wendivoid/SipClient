@@ -20,15 +20,11 @@ var AccountsTable = class accountsTable {
       ]);
       this.add_columns();
       let client = new NirahSocket();
-      if(client.connect()) {
-        client.send_message({ method: 'AllAccounts' });
-        let res = client.read_message();
-        res.accounts.forEach(function (item) {
-          self._store.set(self._store.append(), [0, 1, 2, 3, 4], [item.id, item.username, item.password, item.host, item.activate]);
-        });
-      } else {
-        log("Failed to connect to nirah socket");
-      }
+      client.send_message({ method: 'AllAccounts' });
+      let res = client.read_message();
+      res.accounts.forEach(function (item) {
+        self._store.set(self._store.append(), [0, 1, 2, 3, 4], [item.id, item.username, item.password, item.host, item.activate]);
+      });
       this._treeview.set_model(this._store);
   }
 
@@ -50,7 +46,6 @@ var AccountsTable = class accountsTable {
         col.pack_start(unameColRender, true);
         unameColRender.connect('edited', function (firstArg, old, new_text, user_data) {
           let client = new NirahSocket();
-          client.connect();
           let req = client.editAccountUsernameRequest(parseInt(old), new_text);
           client.send_then(req, function () { self.updateUser(old, new_text); });
         });
@@ -62,7 +57,6 @@ var AccountsTable = class accountsTable {
         col.pack_start(pwordColRender, true);
         pwordColRender.connect('edited', function (firstArg, old, password, user_data) {
           let client = new NirahSocket();
-          client.connect();
           let req = client.editAccountPasswordRequest(parseInt(old), password);
           client.send_then(req, function () { self.updatePass(old, password);});
         });
@@ -74,7 +68,6 @@ var AccountsTable = class accountsTable {
         col.pack_start(hostColRender, true);
         hostColRender.connect('edited', function (firstArg, old, new_text, user_data) {
           let client = new NirahSocket();
-          client.connect();
           let req = client.editAccountHostnameRequest(parseInt(old), new_text);
           client.send_then(req, function () { self.updateHost(old, new_text) });
         });
@@ -88,7 +81,6 @@ var AccountsTable = class accountsTable {
           let iter = self._store.get_iter (Gtk.TreePath.new_from_string(path))[1];
           let value = self._store.get_value(iter, 4);
           let client = new NirahSocket();
-          client.connect();
           client.send_message({ method: 'EditAccountActivation', account: parseInt(path)});
           let res = client.read_message();
           if(res.response == 'Ok') {

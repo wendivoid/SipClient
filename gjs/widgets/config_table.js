@@ -26,7 +26,6 @@ var ConfigTable = class configTable {
       this._valueColRender = new Gtk.CellRendererText();
       this._valueColRender.connect('edited', function (firstArg, old, value, user_data) {
         let client = new NirahSocket();
-        client.connect();
         let iter = self._store.get_iter (Gtk.TreePath.new_from_string(old))[1];
         let key = self._store.get_value(iter, 0);
         let ty = self._store.get_value(iter, 3);
@@ -45,15 +44,10 @@ var ConfigTable = class configTable {
       this._treeview.append_column(this._valueCol);
       this._treeview.append_column(this._defaultCol);
       this._component.add(this._treeview);
-      if(client.connect()) {
-        let self = this;
-        let req = { 'method': 'AllVariables' };
-        client.send_then_expect(req, 'AllConfigVariables', function(res) {
-          self.addItems(res, self)
-        });
-      } else {
-        print("Failed to connect to nirah socket");
-      }
+      let req = { 'method': 'AllVariables' };
+      client.send_then_expect(req, 'AllConfigVariables', function(res) {
+        self.addItems(res, self)
+      });
   }
 
   widget() {
