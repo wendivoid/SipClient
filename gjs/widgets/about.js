@@ -10,7 +10,7 @@ var AboutWidget = class aboutWidget {
   constructor() {
       let self = this;
       this._component = new Gtk.VBox({ margin: 20, expand: true });
-      let client = new NirahSocket();
+      this.client = new NirahSocket();
       this._store = new Gtk.ListStore();
       this._store.set_column_types([
         GObj.TYPE_STRING, GObj.TYPE_STRING,
@@ -35,7 +35,7 @@ var AboutWidget = class aboutWidget {
       this._treeview.append_column(this._verCol);
       this._component.add(this._treeview);
       let req = { 'method': 'AboutNirah' };
-      client.send_then_expect(req, 'AboutNirah', function(res) {
+      this.client.send_then_expect(req, 'AboutNirah', function(res) {
         self.addItems(res, self)
       });
   }

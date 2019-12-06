@@ -10,6 +10,7 @@ const { AccountHistory } = imports.widgets.account_history;
 var HistoryPage = class historyPage {
   constructor() {
       let self = this;
+      this.client = new NirahSocket();
       this._component = new Gtk.Box({ orientation: Gtk.Orientation.VERTICAL, expand: true });
       this.accStore = new Gtk.ListStore();
       this.accStore.set_column_types([
@@ -40,10 +41,9 @@ var HistoryPage = class historyPage {
   }
 
   loadAccounts() {
-    let client = new NirahSocket();
     let self = this;
     let req = { method: 'AllAccounts' };
-    client.send_then_expect(req, 'AllAccounts', function (res) {
+    this.client.send_then_expect(req, 'AllAccounts', function (res) {
       res.accounts.forEach(function (item) {
         self.accStore.set(self.accStore.append(), [0, 1], [item.id, item.username+' '+item.host]);
       });

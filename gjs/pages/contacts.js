@@ -15,9 +15,9 @@ var ContactsPage = class contactsPage {
       this.listbox = new Gtk.ListBox();
       this.scrollWindow.add(this.listbox);
       this._component.add(this.scrollWindow);
-      let client = new NirahSocket();
+      this.client = new NirahSocket();
       let req = { method: 'AllContacts' };
-      client.send_then_expect(req, 'AllContacts', function (item) {
+      this.client.send_then_expect(req, 'AllContacts', function (item) {
         self.addItems(item.contacts);
       });
   }

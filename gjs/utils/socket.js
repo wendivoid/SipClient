@@ -37,7 +37,6 @@ var NirahSocket = class nirahSocket {
   read_message() {
     let output_reader = Gio.DataInputStream.new(this._conn.get_input_stream());
     let [output, count] = output_reader.read_line(null);
-    print(JSON.stringify(imports.byteArray.toString(output)));
     return JSON.parse(imports.byteArray.toString(output));
   }
 

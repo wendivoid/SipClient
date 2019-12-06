@@ -10,7 +10,7 @@ var ConfigTable = class configTable {
   constructor() {
       let self = this;
       this._component = new Gtk.VBox({ margin: 20, expand: true });
-      let client = new NirahSocket();
+      this.client = new NirahSocket();
       this._store = new Gtk.ListStore();
       this._store.set_column_types([
         GObj.TYPE_STRING, GObj.TYPE_STRING,
@@ -25,12 +25,11 @@ var ConfigTable = class configTable {
       this._valueCol = new Gtk.TreeViewColumn({ expand: true, title: 'Value' });
       this._valueColRender = new Gtk.CellRendererText();
       this._valueColRender.connect('edited', function (firstArg, old, value, user_data) {
-        let client = new NirahSocket();
         let iter = self._store.get_iter (Gtk.TreePath.new_from_string(old))[1];
         let key = self._store.get_value(iter, 0);
         let ty = self._store.get_value(iter, 3);
         let req = { method: 'SetConfig', key: key, value: { ty, value }};
-        client.send_then(req, function () { self.updateValue(old, value); });
+        self.client.send_then(req, function () { self.updateValue(old, value); });
       });
       this._valueCol.set_cell_data_func(this._valueColRender, self.renderValue);
       this._valueCol.pack_start(this._valueColRender, true);
@@ -45,7 +44,7 @@ var ConfigTable = class configTable {
       this._treeview.append_column(this._defaultCol);
       this._component.add(this._treeview);
       let req = { 'method': 'AllVariables' };
-      client.send_then_expect(req, 'AllConfigVariables', function(res) {
+      self.client.send_then_expect(req, 'AllConfigVariables', function(res) {
         self.addItems(res, self)
       });
   }
