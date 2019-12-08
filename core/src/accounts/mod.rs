@@ -3,10 +3,12 @@ use async_trait::async_trait;
 use crate::core::Provider;
 use crate::core::NirahResult;
 
-mod models;
-pub use self::models::NewAccount;
-pub use self::models::Account;
-pub use self::models::AccountType;
+mod account_type;
+pub use self::account_type::AccountType;
+
+mod account;
+pub use self::account::NewAccount;
+pub use self::account::Account;
 
 mod memory;
 pub use self::memory::InMemoryAccountsProvider;

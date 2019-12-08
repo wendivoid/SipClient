@@ -6,11 +6,13 @@ use crate::core::Provider;
 mod memory;
 pub use self::memory::InMemoryDatabaseProvider;
 
-mod models;
-pub use self::models::TransactionEvent;
-pub use self::models::TransactionEventData;
-pub use self::models::NewTransactionEvent;
-pub use self::models::NewTransactionEventData;
+mod transaction_data;
+pub use self::transaction_data::TransactionEventData;
+pub use self::transaction_data::NewTransactionEventData;
+
+mod transaction_event;
+pub use self::transaction_event::TransactionEvent;
+pub use self::transaction_event::NewTransactionEvent;
 
 #[async_trait]
 pub trait DatabaseProvider: Provider {

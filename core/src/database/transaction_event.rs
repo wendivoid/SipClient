@@ -1,6 +1,9 @@
 use chrono::NaiveDateTime;
 use serde::{ Serialize, Deserialize };
 
+use super::TransactionEventData;
+use super::NewTransactionEventData;
+
 #[derive(Debug, PartialEq, Clone, Serialize, Deserialize)]
 pub struct TransactionEvent {
     pub id: u32,
@@ -12,32 +15,12 @@ pub struct TransactionEvent {
 }
 
 #[derive(Debug, PartialEq, Clone, Serialize, Deserialize)]
-pub enum TransactionEventData {
-    TextMessage {
-        message: String,
-    },
-    Invitation {
-
-    }
-}
-
-#[derive(Debug, PartialEq, Clone, Serialize, Deserialize)]
 pub struct NewTransactionEvent {
     pub account: u32,
     pub contact: u32,
     pub sent: bool,
     pub time: NaiveDateTime,
     pub data: NewTransactionEventData
-}
-
-#[derive(Debug, PartialEq, Clone, Serialize, Deserialize)]
-pub enum NewTransactionEventData {
-    NewTextMessage {
-        message: String,
-    },
-    NewInvitation {
-
-    }
 }
 
 impl NewTransactionEvent {

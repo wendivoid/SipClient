@@ -1,10 +1,7 @@
 use serde::{ Serialize, Deserialize };
 use std::collections::HashMap;
 
-#[derive(Debug, PartialEq, Clone, Copy, Serialize, Deserialize)]
-pub enum AccountType {
-    Sip
-}
+use super::AccountType;
 
 #[derive(Debug, PartialEq, Clone, Serialize, Deserialize)]
 pub struct NewAccount {

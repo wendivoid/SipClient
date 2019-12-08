@@ -1,24 +1,16 @@
 use async_trait::async_trait;
 
 use crate::core::NirahResult;
-use crate::accounts::Account;
-use crate::contacts::Contact;
-use crate::database::TransactionEvent;
 use crate::core::Provider;
 
 mod null;
 pub use self::null::NullNotifierProvider;
 
-pub struct NotifierParams {
-    pub invite_id: Option<usize>
-}
+mod argument;
+pub use self::argument::NotifierArgument;
 
-pub struct NotifierArgument<'a> {
-    pub account: &'a Account,
-    pub contact: &'a Contact,
-    pub params: NotifierParams,
-    pub msg: &'a TransactionEvent
-}
+mod params;
+pub use self::params::NotifierParams;
 
 #[async_trait]
 pub trait NotifierProvider: Provider {

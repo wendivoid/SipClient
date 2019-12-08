@@ -5,9 +5,9 @@ use crate::core::NirahResult;
 mod memory;
 pub use self::memory::InMemoryContactsProvider;
 
-mod models;
-pub use self::models::Contact;
-pub use self::models::NewContact;
+mod contact;
+pub use self::contact::Contact;
+pub use self::contact::NewContact;
 
 #[async_trait]
 pub trait ContactsProvider: Provider {

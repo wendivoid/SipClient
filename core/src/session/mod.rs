@@ -7,13 +7,8 @@ use tokio::time::Instant;
 mod sip;
 pub use self::sip::SipSessionProvider;
 
-pub enum SessionEvent {
-    Timeout,
-    AcceptInvite { invite: usize },
-    Bye { call: String },
-    Transaction { transaction: TransactionEvent },
-    Data { data: Vec<u8> }
-}
+mod event;
+pub use self::event::SessionEvent;
 
 #[async_trait]
 pub trait SessionProvider: Provider {

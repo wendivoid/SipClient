@@ -1,26 +1,15 @@
 use async_trait::async_trait;
 
 use crate::prelude::*;
-use libsdp::SdpOffer;
 
 mod null;
 pub use self::null::NullStreamingProvider;
 
-#[derive(Debug)]
-pub struct StreamingEvent {
-    pub local_port: u32,
-    pub call_id: String,
-    pub inputs: Vec<SdpOffer>,
-    pub outputs: Vec<SdpOffer>
-}
+mod event;
+pub use self::event::StreamingEvent;
 
-#[derive(Debug, PartialEq, Clone)]
-pub enum StreamingError {
-    FailedOpeningSink,
-    UnknownCodec(libsdp::SdpCodecIdentifier),
-    InvalidMediaFormat,
-    NoConnectionAddress
-}
+mod error;
+pub use self::error::StreamingError;
 
 #[async_trait]
 pub trait StreamingProvider: Provider {
