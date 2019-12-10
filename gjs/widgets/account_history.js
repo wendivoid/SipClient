@@ -8,7 +8,7 @@ const { NirahSocket } = imports.utils.socket;
 const { TransactionWidget } = imports.widgets.transaction;
 
 var AccountHistory = class accountHistory {
-  constructor(account) {
+  constructor() {
       let self = this;
       this.client = new NirahSocket();
       this._component = new Gtk.ListBox({ margin: 7, expand: true });
@@ -29,7 +29,7 @@ var AccountHistory = class accountHistory {
     this.client.send_then_expect(req, 'AccountTransactions', function (item) {
       item.transactions.forEach(function (transaction) {
         let req = { method: 'GetContact', id: transaction[1].contact };
-        this.client.send_then_expect(req, 'Contact', function (item) {
+        self.client.send_then_expect(req, 'Contact', function (item) {
           self.contact = item.contact;
         });
         self._component.add(new TransactionWidget(self.account, self.contact, transaction).widget());
