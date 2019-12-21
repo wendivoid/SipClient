@@ -27,10 +27,10 @@
   #### NotifierProvider
   This provider sends notifications when a message/call is received.
 
-  ### RpcProvider
+  #### RpcProvider
   Handles sending and receiving rpc messages.
 
-  ### RpcHandlerProvider
+  #### RpcHandlerProvider
   Performs functions with received rpc messages.
 
   #### SIP Provider

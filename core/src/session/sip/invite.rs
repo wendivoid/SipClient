@@ -86,12 +86,7 @@ impl SipSessionProvider {
                 let answer_req = invitation.accept(format!("{}", response_sdp).as_bytes().to_vec())?;
                 let data = format!("{}", answer_req);
                 socket.send_to(data.as_ref(), &account.get_socket_address()).await?;
-                 let event = StreamingEvent {
-                     local_port,
-                     call_id,
-                     inputs: vec![response_sdp],
-                     outputs: vec![cleaned_sdp]
-                 };
+                 let event = build_stream_event(response_sdp, cleaned_sdp, local_port, call_id);
                  ctx.streaming.handle_streams(streaming_ctx!(ctx), event).await?;
                  let new = self.invitations.remove(invite);
                  self.active.push(new);
@@ -127,4 +122,44 @@ impl SipSessionProvider {
                         );
         Ok(Some((cleaned_sdp, new, local_port)))
     }
+}
+
+fn build_stream_event(res: SdpOffer, clean: SdpOffer, local: u32, call_id: String) -> Vec<StreamingEvent> {
+    let mut events = vec![];
+    if let Some(global_connection) = clean.get_connection() {
+        for media in &clean.media {
+            for format in &media.formats {
+                if let Some(conn) = &format.connection {
+                    for attr in &format.attributes {
+                        if let SdpAttribute::RtpMap(map) = attr {
+                            events.push(StreamingEvent::AudioSession {
+                                call_id: call_id.clone(),
+                                local_port: local,
+                                remote_addr: conn.address.clone(),
+                                remote_port: media.port,
+                                codec: map.encoding.clone(),
+                                identifier: format.codec.clone(),
+                                clock_rate: map.clock_rate,
+                            });
+                        }
+                    }
+                } else {
+                    for attr in &format.attributes {
+                        if let SdpAttribute::RtpMap(map) = attr {
+                            events.push(StreamingEvent::AudioSession {
+                                call_id: call_id.clone(),
+                                local_port: local,
+                                remote_addr: global_connection.address.clone(),
+                                remote_port: media.port,
+                                codec: map.encoding.clone(),
+                                identifier: format.codec.clone(),
+                                clock_rate: map.clock_rate,
+                            });
+                        }
+                    }
+                }
+            }
+        }
+    }
+    events
 }

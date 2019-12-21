@@ -16,7 +16,7 @@ pub trait StreamingProvider: Provider {
 
     async fn list_streams(&self) -> NirahResult<Vec<String>>;
 
-    async fn handle_streams<'a>(&mut self, ctx: StreamingCtx<'a>, events: StreamingEvent) -> NirahResult<()>;
+    async fn handle_streams<'a>(&mut self, ctx: StreamingCtx<'a>, events: Vec<StreamingEvent>) -> NirahResult<()>;
 
     async fn end_stream<'a>(&mut self, ctx: StreamingCtx<'a>, call_id: String) -> NirahResult<()>;
 }
