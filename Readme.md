@@ -6,7 +6,6 @@
     .
     ├── core                   # Core Library Files
     ├── data                   # example data used for testing
-    ├── gjs                    # Development Front End
     └── nirah                  # The actual daemon binary
 
 ### Core
@@ -38,9 +37,6 @@
 
   #### Streaming Provider
   This provider handles playing audio streams.
-
-## gjs
-  This is a front end i use for playing around with Nirah. **It will never be stabilized**. I would like to eventually rewrite this in rust using relm and stabilize that.
 
 ## nirah
   This is the actual soft phone it consists of a daemon & cli program for interacting
