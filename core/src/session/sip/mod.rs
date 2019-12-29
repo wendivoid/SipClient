@@ -1,21 +1,22 @@
 use tokio::net::UdpSocket;
+use tokio::time::Instant;
 use libsip::client::SoftPhone;
 use libsip::client::InviteHelper;
+use libsip::client::HeaderWriteConfig;
 use libsip::uri::Uri;
 use libsip::uri::UriAuth;
 use libsip::uri::Param;
+use libsip::uri::parse_domain;
 use libsip::core::Transport;
 use libsdp::SdpMediaType;
 use libsdp::SdpTransport;
 use libsdp::SdpCodecIdentifier;
 use libsdp::SdpSanitizer;
 use libsdp::SdpSanitizerConfig;
-use libsip::uri::parse_domain;
 
 use crate::prelude::*;
 use crate::config::keys::default_ip_interface;
 
-use tokio::time::Instant;
 
 #[macro_use]
 mod macros;
@@ -37,7 +38,8 @@ pub struct SipSessionProvider {
     client: Option<SoftPhone>,
     invitations: Vec<InviteHelper>,
     active: Vec<InviteHelper>,
-    sanitizer: SdpSanitizer
+    sanitizer: SdpSanitizer,
+    header_config: HeaderWriteConfig
 }
 
 impl SipSessionProvider {
@@ -57,7 +59,8 @@ impl SipSessionProvider {
                 allowed_codecs: vec![SdpCodecIdentifier(0)],
                 allowed_transports: vec![SdpTransport::RtpAvp],
                 allowed_media_types: vec![SdpMediaType::Audio]
-            })
+            }),
+            header_config: HeaderWriteConfig::default()
         }
     }
 

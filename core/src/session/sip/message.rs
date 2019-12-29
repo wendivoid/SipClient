@@ -5,7 +5,7 @@ impl SipSessionProvider {
         debug!("Received Sip Text Message: {:?}", msg);
         if let libsip::SipMessage::Request { uri, headers, body, .. } = msg {
             let helper = libsip::client::MessageHelper::new(uri, headers, body)?;
-            let response = helper.received()?;
+            let response = helper.received(&self.header_config)?;
             let response_data = format!("{}", response);
             let socket = unwrap_mut_or_else_not_connected!(self, socket, "Socket not connected");
             let account = unwrap_or_else_not_connected!(self, acc, "Account not connected");

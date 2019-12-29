@@ -22,7 +22,7 @@ impl SipSessionProvider {
             let helper = libsip::client::InviteHelper::new(uri.clone(), headers, body)?;
             let socket = unwrap_mut_or_else_not_connected!(self, socket, "Socket not connected");
             let account = unwrap_or_else_not_connected!(self, acc, "Account not connected");
-            let ring_req = helper.ringing()?;
+            let ring_req = helper.ringing(&self.header_config)?;
             let data = format!("{}", ring_req);
             socket.send_to(data.as_ref(), &account.get_socket_address()).await?;
             if let Some(contact) = ctx.contacts.get_contact_from_uri(uri).await? {
@@ -83,7 +83,7 @@ impl SipSessionProvider {
                 trace!("Response_sdp: {:?}", &response_sdp);
                 let socket = unwrap_mut_or_else_not_connected!(self, socket, "Socket not connected");
                 let account = unwrap_or_else_not_connected!(self, acc, "Account not connected");
-                let answer_req = invitation.accept(format!("{}", response_sdp).as_bytes().to_vec())?;
+                let answer_req = invitation.accept(format!("{}", response_sdp).as_bytes().to_vec(), &self.header_config)?;
                 let data = format!("{}", answer_req);
                 socket.send_to(data.as_ref(), &account.get_socket_address()).await?;
                  let event = build_stream_event(response_sdp, cleaned_sdp, local_port, call_id);
