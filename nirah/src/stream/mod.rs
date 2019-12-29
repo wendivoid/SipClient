@@ -9,27 +9,34 @@ use gstreamer::ElementExtManual;
 use gstreamer::GstBinExtManual;
 use gstreamer::ElementFactory;
 use gstreamer::ToValue;
+use gstreamer::PadExtManual;
 use gstreamer::prelude::ObjectExt;
 
 use nirah_core::prelude::*;
 
-pub struct GSTreamerProvider {
+use std::collections::HashMap;
 
+pub struct GSTreamerProvider {
+    pipelines: HashMap<String, Pipeline>
 }
 
 impl GSTreamerProvider {
 
     pub fn new() -> NirahResult<GSTreamerProvider> {
         gstreamer::init().unwrap();
-        Ok(GSTreamerProvider {})
+        Ok(GSTreamerProvider {
+            pipelines: HashMap::new()
+        })
     }
 
     pub fn audio_input_element(&self) -> NirahResult<Element> {
-        Ok(ElementFactory::make("pulsesrc", None).expect("Failed to create audio input element"))
+        let elem = ElementFactory::make("autoaudiosrc", None).expect("Failed to create audio input element");
+        Ok(elem)
     }
 
     pub fn audio_output_element(&self) -> NirahResult<Element> {
-        Ok(ElementFactory::make("pulsesink", None).expect("Failed to create audio output element"))
+        let elem = ElementFactory::make("autoaudiosink", None).expect("Failed to create audio output element");
+        Ok(elem)
     }
 
     pub fn udp_sink(&self, address: String, port: u32) -> NirahResult<Element> {
@@ -110,48 +117,40 @@ impl StreamingProvider for GSTreamerProvider {
                     remote_addr, codec, clock_rate,
                     identifier
                 } => {
-                    let udp_in = self.udp_src(identifier, codec.clone(), clock_rate, local_port)?;
-                    let rtp_decoder = self.get_rtp_decoder_element(codec.clone())?;
-                    let audio_decoder = self.get_audio_decoder_element(codec.clone())?;
-                    let audio_output = self.audio_output_element()?;
-                    let queue = ElementFactory::make("queue", None).expect("Failed to create queue element");
+                     let udp_in = self.udp_src(identifier, codec.clone(), clock_rate, local_port)?;
+                     let rtp_decoder = self.get_rtp_decoder_element(codec.clone())?;
+                     let audio_decoder = self.get_audio_decoder_element(codec.clone())?;
+                     let audio_output = self.audio_output_element()?;
+//                     Element::link_many(&[&udp_in, &rtp_decoder, &audio_decoder, &audio_output]).expect("Failed to link elements");
+                     let pipeline2 = Pipeline::new(None);
+                     pipeline2.add_many(
+                         &[&udp_in, &rtp_decoder, &audio_decoder, &audio_output]
+                     ).expect("Failed to add elements to the pipeline");
 
-                    let audio_input = self.audio_input_element()?;
-                    let audio_encoder = self.get_audio_encoder_element(codec.clone())?;
-                    let rtp_encoder = self.get_rtp_encoder_element(codec)?;
-                    let udp_out = self.udp_sink(remote_addr, remote_port)?;
-                    let resample = ElementFactory::make("audioresample", None).expect("Failed to create audioresample element");
-                    let queue2 = ElementFactory::make("queue", None).expect("Failed to create queue element");
+                     Element::link_many(&[&udp_in, &rtp_decoder]).expect("Failed to link udp_in & rtp_decoder");
+                     Element::link_many(&[&rtp_decoder, &audio_decoder]).expect("Failed to link rtp_decoder & audio_decoder");
+                     Element::link_many(&[&audio_decoder, &audio_output]).expect("Failed to link audio_decoder & audio_output");
 
-                    let pipeline = Pipeline::new(None);
-                    pipeline.add_many(
-                        &[&audio_input, &queue2, &resample, &audio_encoder, &rtp_encoder, &udp_out]
-                    ).expect("Failed to link elements to the pipeline");
-                    pipeline.add_many(
-                        &[&udp_in, &queue, &rtp_decoder, &audio_decoder, &audio_output]
-                    ).expect("Failed to add elements to the pipeline");
+                     pipeline2
+                     .set_state(gstreamer::State::Playing)
+                     .expect("Unable to set pipeline to `playing` state");
 
-                    Element::link_many(&[&audio_input, &queue2, &resample, &audio_encoder, &rtp_encoder, &udp_out]).expect("Failed to link elements");
-                    Element::link_many(&[&udp_in, &queue, &rtp_decoder, &audio_decoder, &audio_output]).expect("Failed to link elements");
-
-                    let bus = pipeline
-                        .get_bus()
-                        .expect("Pipeline1 without bus. Shouldn't happen!");
-                    pipeline
-                        .set_state(gstreamer::State::Playing)
-                        .expect("Unable to set the pipeline to the `Playing` state");
-
-                    for msg in bus.iter_timed(gstreamer::CLOCK_TIME_NONE) {
-                    use gstreamer::MessageView;
-                    match msg.view() {
-                        MessageView::Eos(..) => break,
-                        MessageView::Error(err) => {
-
-                            println!("{:?}", err);
-                        },
-                        _ => (),
-                    }
-                }
+                    // let audio_input = self.audio_input_element()?;
+                    // let audio_encoder = self.get_audio_encoder_element(codec.clone())?;
+                    // let rtp_encoder = self.get_rtp_encoder_element(codec)?;
+                    // let udp_out = self.udp_sink(remote_addr, remote_port)?;
+                    // let queue2 = ElementFactory::make("queue", None).expect("Failed to create queue element");
+                    // let pipeline = Pipeline::new(None);
+                    // pipeline.add_many(
+                    //     &[&audio_input, &queue2, &audio_encoder, &rtp_encoder, &udp_out]
+                    // ).expect("Failed to link elements to the pipeline");
+                    //Element::link_many(&[&audio_input, &queue2, &audio_encoder, &rtp_encoder, &udp_out]).expect("Failed to link elements");
+                    //pipeline
+                    //    .set_state(gstreamer::State::Playing)
+                    //    .expect("Unable to set the pipeline to the `Playing` state");
+                    //self.pipelines.insert(call_id.clone(), pipeline);
+                    pipeline2.debug_to_dot_file(gstreamer::DebugGraphDetails::all(), "PLAYING");
+                    self.pipelines.insert(call_id, pipeline2);
                 }
             }
         }
