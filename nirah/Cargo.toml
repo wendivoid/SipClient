@@ -11,7 +11,7 @@ name = "nirah"
 path = "src/bin/nirah.rs"
 
 [dependencies]
-nirah-core = { path = "../core" }
+nirah-core = { path = "../core", features = ["gst"] }
 libsip = { git = "https://github.com/Bytebuddha/libsip" }
 libsdp = { path = "../../libsdp" }
 chrono = "0.4.10"

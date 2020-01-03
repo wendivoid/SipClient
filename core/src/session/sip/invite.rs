@@ -86,7 +86,8 @@ impl SipSessionProvider {
                 let answer_req = invitation.accept(format!("{}", response_sdp).as_bytes().to_vec(), &self.header_config)?;
                 let data = format!("{}", answer_req);
                 socket.send_to(data.as_ref(), &account.get_socket_address()).await?;
-                 let event = build_stream_event(response_sdp, cleaned_sdp, local_port, call_id);
+
+                 let event = build_stream_event(cleaned_sdp, local_port, call_id);
                  ctx.streaming.handle_streams(streaming_ctx!(ctx), event).await?;
                  let new = self.invitations.remove(invite);
                  self.active.push(new);
@@ -124,7 +125,7 @@ impl SipSessionProvider {
     }
 }
 
-fn build_stream_event(_res: SdpOffer, clean: SdpOffer, local: u32, call_id: String) -> Vec<StreamingEvent> {
+fn build_stream_event(clean: SdpOffer, local: u32, call_id: String) -> Vec<StreamingEvent> {
     let mut events = vec![];
     if let Some(global_connection) = clean.get_connection() {
         for media in &clean.media {

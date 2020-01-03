@@ -36,7 +36,7 @@ impl StreamingProvider for GStreamerProvider {
         Ok(vec![])
     }
 
-    async fn handle_streams<'a>(&mut self, _ctx: StreamingCtx<'a>, events: Vec<StreamingEvent>) -> NirahResult<()> {
+    async fn handle_streams<'a>(&mut self, _ctx: StreamingCtx<'a>, _events: Vec<StreamingEvent>) -> NirahResult<()> {
         Ok(())
     }
 
