@@ -1,6 +1,8 @@
 use crate::prelude::*;
 
-use std::io;
+#[cfg(feature = "gst")]
+use crate::streaming::GStreamerProvider;
+
 use std::collections::HashMap;
 
 pub struct Builder<T> {
@@ -69,7 +71,7 @@ impl <T>Builder<T> {
         self
     }
 
-    pub fn build(self) -> io::Result<Server<T>> {
+    pub fn build(self) -> NirahResult<Server<T>> {
         let address_manager = AddressManager::new(5060);
         let sessions = HashMap::new();
         let config = self.config.unwrap_or(Box::new(InMemoryConfigProvider::new()));
@@ -78,7 +80,10 @@ impl <T>Builder<T> {
         let database = self.database.unwrap_or(Box::new(InMemoryDatabaseProvider::new()));
         let rpc_handler = self.rpc_handler.unwrap_or(Box::new(DefaultRpcHandler::new()));
         let notifier = self.notifier.unwrap_or(Box::new(NullNotifierProvider));
+        #[cfg(not(feature = "gst"))]
         let streaming = self.streaming.unwrap_or(Box::new(NullStreamingProvider));
+        #[cfg(feature = "gst")]
+        let streaming = self.streaming.unwrap_or(Box::new(GStreamerProvider::new()?));
         if let Some(rpc) = self.rpc {
             Ok(Server {
                 config, accounts, rpc_handler,
@@ -87,7 +92,7 @@ impl <T>Builder<T> {
                 streaming
             })
         } else {
-            Err(io::Error::new(io::ErrorKind::InvalidInput, "Rpc Provider is required"))
+            Err(NirahError::MissingProvider("rpc"))
         }
     }
 }

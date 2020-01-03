@@ -1,4 +1,6 @@
 #!/usr/bin/env bash
 
-GST_DEBUG=4 gst-launch-1.0 pulsesrc ! mulawenc ! rtppcmupay ! udpsink port=6666 \
-    udpsrc caps="application/x-rtp" port=6666 ! rtppcmudepay ! mulawdec ! autoaudiosink
+GST_DEBUG_DUMP_DOT_DIR=. gst-launch-1.0 -e \
+    udpsrc caps="application/x-rtp,media=(string)audio,clock-rate=(int)8000,payload=(int)0" \
+    port=5061 ! rtppcmudepay ! mulawdec ! queue ! fakesink dump=true\
+    autoaudiosrc ! mulawenc ! rtppcmupay ! udpsink host=192.168.1.76 port=24968 \

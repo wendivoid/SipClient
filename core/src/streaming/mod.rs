@@ -11,6 +11,11 @@ pub use self::event::StreamingEvent;
 mod error;
 pub use self::error::StreamingError;
 
+#[cfg(feature = "gst")]
+mod gst;
+#[cfg(feature = "gst")]
+pub use gst::GStreamerProvider;
+
 #[async_trait]
 pub trait StreamingProvider: Provider {
 

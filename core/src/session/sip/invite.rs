@@ -124,7 +124,7 @@ impl SipSessionProvider {
     }
 }
 
-fn build_stream_event(res: SdpOffer, clean: SdpOffer, local: u32, call_id: String) -> Vec<StreamingEvent> {
+fn build_stream_event(_res: SdpOffer, clean: SdpOffer, local: u32, call_id: String) -> Vec<StreamingEvent> {
     let mut events = vec![];
     if let Some(global_connection) = clean.get_connection() {
         for media in &clean.media {

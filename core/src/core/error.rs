@@ -29,7 +29,8 @@ pub enum NirahError {
     SessionNotAssociatedWithAccount,
     NoNetworksAvailable,
     SdpNoConnection,
-    InvalidMediaFormat(SdpMediaFormat)
+    InvalidMediaFormat(SdpMediaFormat),
+    MissingProvider(&'static str)
 }
 
 macro_rules! impl_simple_from {
