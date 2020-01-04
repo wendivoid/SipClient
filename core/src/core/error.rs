@@ -11,6 +11,7 @@ use nom::Err;
 use nom::error::ErrorKind;
 
 use crate::config::VariableKey;
+use crate::streaming::StreamingError;
 
 #[derive(Debug)]
 pub enum NirahError {
@@ -29,6 +30,7 @@ pub enum NirahError {
     SessionNotAssociatedWithAccount,
     NoNetworksAvailable,
     SdpNoConnection,
+    Streaming(StreamingError),
     InvalidMediaFormat(SdpMediaFormat),
     MissingProvider(&'static str)
 }
@@ -49,6 +51,7 @@ impl_simple_from!(VarError, Environment);
 impl_simple_from!(SetLoggerError, Logger);
 impl_simple_from!(FromUtf8Error, FromUtf8);
 impl_simple_from!(SanitizerError, SdpSanitize);
+impl_simple_from!(StreamingError, Streaming);
 
 impl From<Err<(&[u8], ErrorKind)>> for NirahError {
     fn from(f: Err<(&[u8], ErrorKind)>) -> NirahError {
