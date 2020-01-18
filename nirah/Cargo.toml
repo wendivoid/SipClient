@@ -13,7 +13,7 @@ path = "src/bin/nirah.rs"
 [dependencies]
 nirah-core = { path = "../core", features = ["gst"] }
 libsip = { git = "https://github.com/Bytebuddha/libsip" }
-libsdp = { path = "../../libsdp" }
+libsdp = { git = "https://github.com/Bytebuddha/libsdp" }
 chrono = "0.4.10"
 tokio = { version = "0.2.1", features = ["full"] }
 async-trait = "0.1.19"

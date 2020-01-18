@@ -19,7 +19,7 @@ log = "0.4.8"
 pnet = "0.23.0"
 ipnetwork = "0.15.1"
 libsip = { git = "https://github.com/Bytebuddha/libsip" }
-libsdp = { path = "../../libsdp" }
+libsdp = { git = "https://github.com/Bytebuddha/libsdp" }
 nom = "5.0.1"
 futures = "0.3.1"
 chrono = { version = "0.4.10", features = ["serde"] }
