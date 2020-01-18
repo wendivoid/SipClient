@@ -11,6 +11,7 @@ use nirah_core::prelude::*;
 
 use std::io;
 use std::path::PathBuf;
+use std::fs::create_dir;
 
 pub struct UdsRpcProvider(Option<UnixListener>);
 
@@ -22,9 +23,12 @@ impl UdsRpcProvider {
 
     pub fn default_file_path() -> NirahResult<PathBuf> {
         use std::env::var;
-        let mut nirah_dir = PathBuf::from("/tmp/nirah");
-        let username = var("USER")?;
-        nirah_dir.push(&format!("nirah-{}.socket", username));
+        let home = var("HOME")?;
+        let mut nirah_dir = PathBuf::from(format!("{}/.local/share/nirah", home));
+        if !nirah_dir.exists() {
+            create_dir(&nirah_dir)?;
+        }
+        nirah_dir.push("nirah.socket");
         Ok(nirah_dir)
     }
 }

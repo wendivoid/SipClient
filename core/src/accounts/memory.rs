@@ -17,7 +17,7 @@ impl InMemoryAccountsProvider {
                 username: "20".into(),
                 password: "program".into(),
                 host: "192.168.1.76".into(),
-                activate: true,
+                activate: false,
                 vars: HashMap::new()
             }
         ])
